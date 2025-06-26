@@ -1,0 +1,30 @@
+services:
+  # rabbitmq:
+  #   image: rabbitmq:3-management
+  #   container_name: rabbitmq
+  #   ports:
+  #     - "5672:5672"       # Cổng cho service RabbitMQ
+  #     - "15672:15672"     # Cổng cho web management UI
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: admin
+  #     RABBITMQ_DEFAULT_PASS: admin
+  #   networks:
+  #     - backend
+
+  redis:
+    image: redis:8
+    container_name: user_redis
+    ports:
+      - "6380:6379" # hostport:portincontainer(still6378)
+    networks:
+      - user_service
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+
+networks:
+  user_service:
+    driver: bridge
+
+volumes:
+  redis_data:

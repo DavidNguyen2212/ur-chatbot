@@ -1,0 +1,123 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// npx prisma migrate dev --name <name of migration>
+// then
+// npx prisma generate
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SubscriptionType {
+  FREE
+  BASIC
+  PRO
+  ENTERPRISE
+}
+
+enum MemberRole {
+  OWNER
+  ADMIN
+  AGENT
+}
+
+enum InviteRole {
+  ADMIN
+  AGENT
+}
+
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  name String
+  phone String
+  password String
+  avatar String
+  isActive Boolean @default(false)
+  createdAt DateTime @default(now()) 
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  emailVerificationTokens EmailVerificationTokens[]
+  passwordResetTokens PasswordResetTokens[]
+  organizationMembers OrganizationMember[]
+  organizationInvites OrganizationInvite[] @relation("InvitedByUser")
+}
+
+model EmailVerificationTokens {
+  id String @id @default(uuid())
+  token String @unique
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  isUsed Boolean @default(false)
+  createdAt DateTime @default(now()) 
+
+  @@index([userId])
+}
+
+model PasswordResetTokens {
+  id String @id @default(uuid())
+  token String @unique
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  isUsed Boolean @default(false)
+  createdAt DateTime @default(now()) 
+
+  @@index([userId])
+}
+
+model Organization {
+  id String @id @default(uuid())
+  name String 
+  description String
+  logo String?
+  contactEmail String @unique
+  contactPhone String
+  address String?
+  settings Json?
+  billingEmail String?
+  billingAddress String?
+  knowledgeDatabaseUrl String?
+  knowledgeDatabaseNamespace String?
+  createdAt DateTime @default(now()) 
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  members OrganizationMember[] @relation("OrganizationMemberToUser")
+  invites OrganizationInvite[]
+}
+
+model OrganizationMember {
+  role MemberRole
+  joinedAt DateTime @default(now()) 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  organization Organization @relation("OrganizationMemberToUser", fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId String
+
+  @@unique([userId, organizationId])
+}
+
+model OrganizationInvite {
+  id String @id @default(uuid())
+  organization  Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId String
+  email String
+  role MemberRole
+  invitedBy User? @relation("InvitedByUser", fields: [invitedById], references: [id], onDelete: Cascade)
+  invitedById String
+  inviteCode String @unique @db.VarChar(12)
+  createdAt DateTime @default(now())
+  expiresAt DateTime 
+  isUsed Boolean @default(false)
+  isRevoked Boolean @default(false)
+}

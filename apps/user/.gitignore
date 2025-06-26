@@ -1,0 +1,10 @@
+node_modules/
+dist/
+
+/generated/prisma
+.env
+.env.development
+.env.production
+.env.staging
+uploads/
+.DS_Store

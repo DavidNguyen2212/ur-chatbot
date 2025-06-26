@@ -1,2 +1,11 @@
 .env
 .env.prod
+# Common for all services
+node_modules/
+.env
+.env.local
+pnpm-lock.yaml
+yarn.lock
+.DS_Store
+dist/
+coverage/

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <title>Xác minh địa chỉ email của bạn</title>
+  </head>
+  <body>
+    <h1>Xin chào <%= user_name %>!</h1>
+    <p>Vui lòng xác minh địa chỉ email của bạn bằng cách nhấp vào liên kết dưới đây:</p>
+    <p>
+      <a href="<%= verification_url %>">Xác Minh Email</a>
+    </p>
+    <p>Nếu bạn không yêu cầu điều này, bạn có thể bỏ qua email này.</p>
+    <p>Liên kết này sẽ hết hạn sau <%= timeOutDay %> ngày.</p>
+    <p>
+      Trân trọng,
+      <br />
+      Đội ngũ Coolchat
+    </p>
+  </body>
+</html>
