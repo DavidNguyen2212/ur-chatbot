@@ -3,6 +3,7 @@ import { AUTH } from '../constants/auth.constant'
 import path from 'path'
 // import { createTransport, Transporter } from 'nodemailer'
 import { sendEmail } from '../infra/ses/ses.send'
+import { userProducer } from '../infra/kafka/kafka.producer'
 
 export const sendVerificationEmail = async (user_name: string, dest: string, token: string) => {
   const verification_url = `${process.env.FRONTEND_URL}${process.env.EMAIL_VERIFICATION_URL}?token=${token}`
@@ -32,14 +33,31 @@ export const sendVerificationEmail = async (user_name: string, dest: string, tok
   //   text: plainMsg,
   //   html: htmlMsg
   // })
-  await sendEmail(
-    process.env.SES_EXAMPLE_USER! || dest, 
-    '[CoolChat] Xác minh địa chỉ email của bạn',
-    {
-      html: htmlMsg,
-      text: plainMsg
-    },
-  )
+
+  // Deprecated. Move to kafka
+  // await sendEmail(
+  //   process.env.SES_EXAMPLE_USER! || dest, 
+  //   '[CoolChat] Xác minh địa chỉ email của bạn',
+  //   {
+  //     html: htmlMsg,
+  //     text: plainMsg
+  //   },
+  // )
+  await userProducer.send({
+    topic: 'email.send',
+    messages: [
+      {   
+        value: JSON.stringify({
+          to: process.env.SES_EXAMPLE_USER! || dest,
+          subject: '[CoolChat] Xác minh địa chỉ email của bạn',
+          html: htmlMsg,
+          text: plainMsg,
+          type: 'verification'
+        })
+      }
+    ]
+  });
+
 }
 
 export const sendPasswordResetEmail = async (user_name: string, dest: string, token: string) => {
@@ -70,12 +88,27 @@ export const sendPasswordResetEmail = async (user_name: string, dest: string, to
   //   text: plainMsg,
   //   html: htmlMsg
   // })
-  await sendEmail(
-    process.env.SES_EXAMPLE_USER! || dest, 
-    '[CoolChat] Đặt lại mật khẩu của bạn',
-    {
-      html: htmlMsg,
-      text: plainMsg
-    },
-  )
+
+  // await sendEmail(
+  //   process.env.SES_EXAMPLE_USER! || dest, 
+  //   '[CoolChat] Đặt lại mật khẩu của bạn',
+  //   {
+  //     html: htmlMsg,
+  //     text: plainMsg
+  //   },
+  // )
+  await userProducer.send({
+    topic: 'email.send',
+    messages: [
+      {   
+        value: JSON.stringify({
+          to: process.env.SES_EXAMPLE_USER! || dest,
+          subject: '[CoolChat] Đặt lại mật khẩu của bạn',
+          html: htmlMsg,
+          text: plainMsg,
+          type: 'resetPassword'
+        })
+      }
+    ]
+  });
 }

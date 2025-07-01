@@ -10,6 +10,7 @@ import orgRouter from './routes/organization.route'
 import usersRouter from './routes/user.route'
 import { defaultErrorHandler } from './middlewares/errors.middleware'
 import { connectUserProducer } from './infra/kafka/kafka.producer'
+import { startEmailConsumer } from './infra/kafka/consumers/email.consumer'
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -71,9 +72,14 @@ app.use('/organization', orgRouter)
 // app.use('/static', staticRouter)
 // app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 app.use(defaultErrorHandler as express.ErrorRequestHandler)
-connectUserProducer().then(() => {
-  console.log('Connected to KAFKA_BROKER!')
+Promise.all([
+  connectUserProducer(),
+  startEmailConsumer()
+]).then(() => {
+  console.log('Connected to KAFKA_BROKER and started email consumer!')
   httpServer.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+    console.log(`User-Service now listening on port ${port}`)
   })
+}).catch(err => {
+  console.error('Failed to start Kafka services:', err)
 })

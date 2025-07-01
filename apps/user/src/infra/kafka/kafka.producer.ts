@@ -1,9 +1,4 @@
-import { Kafka } from 'kafkajs'
-
-const kafka = new Kafka({
-  clientId: 'user-service',
-  brokers: [process.env.KAFKA_BROKER || 'localhost:9092']
-})
+import { kafka } from "./kafka.instance"
 
 export const userProducer = kafka.producer()
 
