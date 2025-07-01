@@ -9,7 +9,7 @@ import { sendPasswordResetEmail, sendVerificationEmail } from '../utils/auth.uti
 import { JwtPayload, sign, SignOptions, verify } from 'jsonwebtoken'
 import { AUTH } from '../constants/auth.constant'
 import redisClient from '../infra/redis/redis.client'
-import { sendOrgRegisteredEvent } from '../infra/kafka/sendEmail'
+import { userProducer } from '../infra/kafka/kafka.producer'
 
 
 class AuthService {
@@ -70,11 +70,19 @@ class AuthService {
     // Send email out of the box!
     // 'Cause in case of rollback, user will receive unreal email
     await sendVerificationEmail(newUser.name, newUser.email, token)
-    await sendOrgRegisteredEvent({
-      orgId: newOrg.id,
-      orgName: newOrg.name,
-      userId: newUser.id,
-      userEmail: newUser.email
+    await userProducer.send({
+      topic: 'organization.registered',
+      messages: [
+        {
+          key: newOrg.id, // optional
+          value: JSON.stringify({
+            orgId: newOrg.id,
+            orgName: newOrg.name,
+            userId: newUser.id,
+            userEmail: newUser.email,
+          }),
+        },
+      ]
     })
     
     return orgMember
