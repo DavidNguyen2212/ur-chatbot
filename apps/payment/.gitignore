@@ -1,0 +1,40 @@
+# Binaries
+/server
+*.exe
+*.out
+*.test
+
+# Build / cache
+/dist/
+/build/
+tmp/
+*.log
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Go build & mod cache (đã global, không cần ignore)
+# !go.mod
+# !go.sum
+
+# Dependency vendored (nếu dùng go mod vendor)
+vendor/
+
+# Env / secrets
+.env
+.env.*
+*.key
+*.crt
+
+# Generated docs or coverage
+docs/
+*.html
+*.cov
+coverage.*
+
+# Application specific
+storages/
+uploads/
