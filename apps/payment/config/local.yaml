@@ -1,0 +1,18 @@
+server:
+  port: 4004
+postgresql:
+  url: ""
+  maxIdleConns: 10
+  maxOpenConns: 100
+  connMaxLifetime: 1h
+logger:
+  log_level: debug
+  file_log_name: "./storages/logs/dev.001.log"
+  max_size: 500
+  max_backups: 3
+  max_age: 28
+  compress: true
+security:
+  jwt:
+frontend:
+  url: http://localhost:3000

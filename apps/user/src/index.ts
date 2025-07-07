@@ -72,14 +72,17 @@ app.use('/organization', orgRouter)
 // app.use('/static', staticRouter)
 // app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 app.use(defaultErrorHandler as express.ErrorRequestHandler)
-Promise.all([
-  connectUserProducer(),
-  startEmailConsumer()
-]).then(() => {
-  console.log('Connected to KAFKA_BROKER and started email consumer!')
-  httpServer.listen(port, () => {
-    console.log(`User-Service now listening on port ${port}`)
-  })
-}).catch(err => {
-  console.error('Failed to start Kafka services:', err)
+// Promise.all([
+//   connectUserProducer(),
+//   startEmailConsumer()
+// ]).then(() => {
+//   console.log('Connected to KAFKA_BROKER and started email consumer!')
+//   httpServer.listen(port, () => {
+//     console.log(`User-Service now listening on port ${port}`)
+//   })
+// }).catch(err => {
+//   console.error('Failed to start Kafka services:', err)
+// })
+httpServer.listen(port, () => {
+  console.log(`User-Service now listening on port ${port}`)
 })
