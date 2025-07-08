@@ -1,0 +1,120 @@
+/* Đây là file định nghĩa giao diện (interface) của dịch vụ CHAT theo định dạng Protocol Buffers 
+(proto3). File này định nghĩa các message truyền tải dữ liệu giữa client và server cũng như 
+service với phương thức RPC. 
+protoc --go_out=. --go-grpc_out=. proto/payment/payment.proto
+*/
+
+syntax = "proto3";
+
+package payment;
+
+// Chỉ định gói cho Go (go_package) để import thư viện sau khi sinh mã code
+option go_package="proto/payment";
+message GetMonthlySubscriptionSummaryRequest {
+    string organization_id = 1;
+    string month_exact = 2;      // format: "2024-05"
+    string month_gte = 3;        
+    string month_lte = 4;        
+    string ordering = 5;        // default: "-month"
+    int32 page = 6;             // default: 1
+    int32 page_size = 7;        // default: 20
+}
+
+message GetMonthlySubscriptionSummaryResponse {
+    int32 count = 1;
+    string next = 2;
+    string previos = 3;
+    repeated MonthlySubscriptionSummaryItem results = 4;
+}
+
+message MonthlySubscriptionSummaryItem {
+    string month = 1;  // YYYY-MM-01 format
+    int32 new_subscriptions_this_month = 2;
+    int32 active_subscriptions = 3;
+    int32 trial_subscriptions = 4;
+    int32 canceled_subscriptions = 5;
+    double monthly_revenue = 6;
+    double trial_conversion_rate = 7;
+}
+
+message GetMonthlyPaymentsReportRequest {
+    string organization_id = 1;
+    string month_exact = 2;
+    string month_gte = 3;
+    string month_lte = 4;
+    string ordering = 5; // e.g., "-month"
+    int32 page = 6;
+    int32 page_size = 7;
+}
+
+message MonthlyPaymentsReportItem {
+    string month = 1; // "YYYY-MM-01"
+    int32 total_payments = 2;
+    int64 total_amount = 3;
+
+    int32 subscription_payments = 4;
+    int64 subscription_amount = 5;
+
+    int32 additional_charge_payments = 6;
+    int64 additional_charge_amount = 7;
+
+    int64 monthly_subscription_amount = 8;
+    int64 yearly_subscription_amount = 9;
+
+    int32 completed_payments = 10;
+    int64 completed_amount = 11;
+    int32 pending_payments = 12;
+    int32 failed_payments = 13;
+    int32 refunded_payments = 14;
+
+    int64 payos_payment_amount = 15;
+    int64 bank_transfer_amount = 16;
+    int64 credit_card_amount = 17;
+}
+
+message GetMonthlyPaymentsReportResponse {
+    int32 count = 1;
+    string next = 2;
+    string previous = 3;
+    repeated MonthlyPaymentsReportItem results = 4;
+}
+
+message GetOrganizationUsageSnapshotRequest {
+    repeated string organization_ids = 1;
+    string ordering = 2; // "id" or "-name", etc.
+    int32 page = 3;
+    int32 page_size = 4;
+  }
+  
+message OrganizationUsageSnapshot {
+    string id = 1;
+    string name = 2;
+
+    int32 storage_used_mb = 3;
+    int32 storage_limit_mb = 4;
+    float storage_usage_percent = 5;
+
+    int32 document_count = 6;
+    int32 human_agent_count = 7;
+
+    int32 ai_queries_used = 8;
+    int32 ai_queries_limit = 9;
+    float ai_usage_percent = 10;
+
+    string subscription_tier = 11;
+    string subscription_status = 12;
+}
+
+message GetOrganizationUsageSnapshotResponse {
+    int32 count = 1;
+    string next = 2;
+    string previous = 3;
+    repeated OrganizationUsageSnapshot results = 4;
+}
+  
+service PaymentService {
+    // RPC kiểu unary (client gửi 1 request và nhận 1 response)
+    rpc GetMonthlySubscriptionSummary(GetMonthlySubscriptionSummaryRequest) returns (GetMonthlySubscriptionSummaryResponse) {};
+    rpc GetMonthlyPaymentsReport(GetMonthlyPaymentsReportRequest) returns (GetMonthlyPaymentsReportResponse);
+    rpc GetOrganizationUsageSnapshot(GetOrganizationUsageSnapshotRequest) returns (GetOrganizationUsageSnapshotResponse);
+}

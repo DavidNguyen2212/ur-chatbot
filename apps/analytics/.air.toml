@@ -1,0 +1,9 @@
+# .air.toml
+# Chạy build ở cmd/server, xuất binary ra tmp/main
+[build]
+  cmd = "go build -o ./tmp/main.exe ./cmd/server"
+  bin = "tmp/main.exe"
+  include_ext = ["go"]
+  exclude_dir = ["tmp", "vendor"]
+  log = "air.log"
+  stop_on_error = true

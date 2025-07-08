@@ -1,0 +1,20 @@
+server:
+  port: 4005
+logger:
+  log_level: debug
+  file_log_name: "./storages/logs/dev.001.log"
+  max_size: 500
+  max_backups: 3
+  max_age: 28
+  compress: true
+security:
+  jwt:
+frontend:
+  url: http://localhost:3000
+services:
+  chat_service:
+    host: "localhost"
+    port: 4001
+  payment_service:
+    host: "localhost"
+    port: 4004

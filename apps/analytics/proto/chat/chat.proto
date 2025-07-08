@@ -1,0 +1,75 @@
+/* Đây là file định nghĩa giao diện (interface) của dịch vụ CHAT theo định dạng Protocol Buffers 
+(proto3). File này định nghĩa các message truyền tải dữ liệu giữa client và server cũng như 
+service với phương thức RPC. 
+protoc --go_out=. --go-grpc_out=. proto/chat/chat.proto
+*/
+
+syntax = "proto3";
+
+package chat;
+
+// Chỉ định gói cho Go (go_package) để import thư viện sau khi sinh mã code
+option go_package="proto/chat";
+message GetDailyChatSummaryRequest {
+    string organization_id = 1;
+    string date_exact = 2;      // YYYY-MM-DD format
+    string date_gte = 3;        // YYYY-MM-DD format  
+    string date_lte = 4;        // YYYY-MM-DD format
+    string ordering = 5;        // default: "-date"
+    int32 page = 6;             // default: 1
+    int32 page_size = 7;        // default: 20
+}
+
+message GetDailyChatSummaryResponse {
+    int32 count = 1;
+    string next = 2;
+    string previos = 3;
+    repeated DailyChatSummary results = 4;
+}
+
+message DailyChatSummary {
+    string organization_id = 1;
+    string date = 2;  // YYYY-MM-DD format
+    
+    // Conversation metrics (by conversation creation date)
+    int32 total_conversations = 3;
+    int32 ai_conversations = 4;
+    int32 human_conversations = 5;
+    double avg_conversation_duration_minutes = 6;
+
+    // Message metrics (by message sending date)
+    int32 total_messages = 7;
+    int32 customer_messages = 8;
+    int32 agent_messages = 9;
+    int32 ai_messages = 10;
+}
+
+message GetAllTimeStatsRequest {
+    string organization_id = 1;
+  }
+  
+  message GetAllTimeStatsResponse {
+    int32 total_conversations = 1;
+    int32 ai_conversations = 2;
+    int32 human_conversations = 3;
+  
+    int32 total_messages = 4;
+    int32 customer_messages = 5;
+    int32 agent_messages = 6;
+    int32 ai_messages = 7;
+  
+    float avg_messages_per_conversation = 8;
+    float avg_conversation_duration_minutes = 9;
+  
+    string first_conversation_date = 10;  // "YYYY-MM-DD"
+    string last_conversation_date = 11;
+    string busiest_day = 12;
+    int32 busiest_day_conversation_count = 13;
+  }
+
+
+service ChatService {
+    // Một ví dụ đơn giản về RPC kiểu unary (client gửi 1 request và nhận 1 response)
+    rpc GetDailyChatSummary(GetDailyChatSummaryRequest) returns (GetDailyChatSummaryResponse) {};
+    rpc GetAllTimeStats(GetAllTimeStatsRequest) returns (GetAllTimeStatsResponse);
+}
