@@ -1,14 +1,13 @@
 
 from typing import Tuple
 import openai
-from app.core.config import settings
 
 
-def tokenize_and_summarize_openai(old_context, query, response, max_token: int = 2048) -> Tuple[str, bool]:
+def tokenize_and_summarize_openai(openai_apiKey: str, old_context, query, response, max_token: int = 2048) -> Tuple[str, bool]:
     new_context = f"{old_context + " " if old_context != "" else ""}Customer: {query}, AI: {response}"
     token_count = len(new_context.split())
     
-    openai.api_key = settings.OPENAI_API_KEY
+    openai.api_key = openai_apiKey
     if token_count >= max_token:
         try:
             response = openai.chat.completions.create(

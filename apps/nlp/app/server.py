@@ -3,29 +3,32 @@ from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
 
+from app.core.config import get_config
+from app.core.logger import setup_logger
 from app.api.main import api_router
-from app.core.config import settings
-from app.middleware.serverauth import VerifyInternalKeyMiddleware
-from app.utils.lifespan import lifespan
+from app.middleware.auth import VerifyInternalKeyMiddleware
 from fastapi.openapi.utils import get_openapi
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
     return f"{route.tags[0]}-{route.name}"
 
+# Load env and config
+config = get_config()
+# Set up loguru
+setup_logger(config)
 
-if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
-    sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
+if config.SENTRY_DSN and config.ENVIRONMENT != "local":
+    sentry_sdk.init(dsn=str(config.SENTRY_DSN), enable_tracing=True)
 
 app = FastAPI(
-    title=settings.PROJECT_NAME,
+    title=config.PROJECT_NAME,
     openapi_url=f"/openapi.json",
     generate_unique_id_function=custom_generate_unique_id,
-    lifespan=lifespan
 )
 
 # Set all CORS enabled origins
-if settings.BACKEND_CORS_ORIGINS == ["*"]:
+if config.BACKEND_CORS_ORIGINS == ["*"]:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
@@ -36,12 +39,12 @@ if settings.BACKEND_CORS_ORIGINS == ["*"]:
 else:
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.all_cors_origins,
+        allow_origins=config.all_cors_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
-app.add_middleware(VerifyInternalKeyMiddleware)
+app.add_middleware(VerifyInternalKeyMiddleware, config.AI_SERVICE_API_KEY)
 
 app.include_router(api_router)
 

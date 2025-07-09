@@ -11,7 +11,6 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain_pinecone import PineconeVectorStore
 from langchain_core.documents import Document
-from app.core.config import settings
 from app.models.chatModel import ChatModel
 from pinecone import Pinecone
 from functools import lru_cache
@@ -22,11 +21,11 @@ from app.utils.summarizer import tokenize_and_summarize_openai
 
 @lru_cache(maxsize=1)
 def get_model():
-    return ChatOpenAI(model="gpt-4o-mini", temperature=0.3, api_key=settings.OPENAI_API_KEY, streaming=True)
+    return ChatOpenAI(model="gpt-4o-mini", temperature=0.3, api_key=configService.OPENAI_API_KEY, streaming=True)
 
 @lru_cache(maxsize=1)
 def get_embedder():
-    return OpenAIEmbeddings(model="text-embedding-3-small", api_key=settings.OPENAI_API_KEY)
+    return OpenAIEmbeddings(model="text-embedding-3-small", api_key=configService.OPENAI_API_KEY)
 
 @lru_cache(maxsize=1)
 def get_prompts(company_name: str, chatbot_attitude: str, start_sentence: str = "Chào bạn, đây là ban tư vấn khách hàng của công ty chúng tôi", end_sentence: str = "Cảm ơn quý khách đã trò chuyện. Hẹn gặp lại quý khách trong thời gian sớm nhất!"):
@@ -66,7 +65,7 @@ def get_chain(company_name: str, chatbot_attitude: str, start_sentence: str, end
     return create_stuff_documents_chain(llm=model, prompt=retrieval_qa_chat_prompt)
 
 def get_retriever(index_host: str, namespace: str):
-    pc = Pinecone(api_key=settings.PINECONE_API_KEY)
+    pc = Pinecone(api_key=configService.PINECONE_API_KEY)
     index = pc.Index(host=index_host)
     vectorStore = CoolChatVectorStore(index=index, embedding=get_embedder())
     return vectorStore.as_retriever(search_kwargs={"namespace": namespace})

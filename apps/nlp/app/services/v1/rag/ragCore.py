@@ -8,14 +8,13 @@ from langchain.chains.history_aware_retriever import create_history_aware_retrie
 from functools import lru_cache
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI
-from app.core.config import settings
 from app.core.connections import PineconeConnectionPool
 from app.models.chatModel import ChatModel
 from app.models.rankest import CoolChatVectorStore
 from langchain_core.messages import HumanMessage, AIMessage
 from app.utils.summarizer import tokenize_and_summarize_openai
 from cachetools import TTLCache, cached
-from app.services.v2.rag.constant import *
+from app.services.v1.rag.constant import *
 
 
 # Cache instances
@@ -41,14 +40,14 @@ def get_model():
     # )
     # decrease the temperature to reduce inference time
     return ChatGoogleGenerativeAI(model="gemini-2.5-flash-preview-04-17", 
-        api_key=settings.GOOGLE_AI_API_KEY,
+        api_key=Global.GOOGLE_AI_API_KEY,
         temperature=0.5, disable_streaming=False)
 
 @cached(cache=_embedder_cache)
 def get_embedder():
     return OpenAIEmbeddings(
         model="text-embedding-3-small", 
-        api_key=settings.OPENAI_API_KEY
+        api_key=Global.OPENAI_API_KEY
     )
 
 @cached(cache=_retriever_cache)

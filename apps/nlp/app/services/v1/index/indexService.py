@@ -1,12 +1,11 @@
 import asyncio
 import hashlib
-import logging
 import os
 import tempfile
 from typing import Any, Dict, List, Tuple
 from uuid import uuid4
 from charset_normalizer import detect
-from fastapi import HTTPException, UploadFile, logger, status
+from fastapi import HTTPException, UploadFile, status
 from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader, TextLoader
 from langchain_core.documents import Document
 from langchain_openai import OpenAIEmbeddings
@@ -14,19 +13,14 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings, GoogleGenerativ
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from tqdm import tqdm
 from tqdm.asyncio import tqdm_asyncio
+from app.core.config import AppConfig
 from app.dtos.indexDto import CreateNamespaceDto
 from app.utils.crawlsite import crawl_sites
-from app.core.config import settings
 from pinecone import Pinecone, ServerlessSpec
 from langchain_pinecone import PineconeVectorStore
 from PyPDF2 import PdfReader
 from docx import Document as DocxDocument
 from fastapi import UploadFile
-
-
-# Thiết lập logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 
 def detect_file_encoding(file: UploadFile) -> str:
@@ -143,7 +137,7 @@ def generate_org_name(organization_id: str, prefix: str) -> str:
 
 
 # main function use camelCase
-async def createIndexesFromFilesAndUrls(websites_data: List[Dict[str, Any]], 
+async def createIndexesFromFilesAndUrls(configService: AppConfig, websites_data: List[Dict[str, Any]], 
     pdfFiles: List[UploadFile] = None, docxFiles: List[UploadFile] = None, txtFiles: List[UploadFile] = None, pdfPrio: List[int] = [], docxPrio: List[int] = [], txtPrio: List[int] = [], 
     organization_id: str = "12345xoz", is_virtual: bool = False):
     try:
@@ -152,8 +146,8 @@ async def createIndexesFromFilesAndUrls(websites_data: List[Dict[str, Any]],
             raise ValueError("No valid files (PDF, Word, or TXT) or websites provided.")
         
         # --- Check shared index exists
-        shared_index_name = settings.INDEX_NAME
-        pc = Pinecone(api_key=settings.PINECONE_API_KEY)
+        shared_index_name = configService.INDEX_NAME
+        pc = Pinecone(api_key=configService.PINECONE_API_KEY)
         existing_indexes = [index_info["name"] for index_info in pc.list_indexes()]
         if shared_index_name not in existing_indexes:
             pc.create_index(
@@ -190,7 +184,7 @@ async def createIndexesFromFilesAndUrls(websites_data: List[Dict[str, Any]],
             files=pdfFiles + docxFiles + txtFiles,
             priorities=pdfPrio + docxPrio + txtPrio
         )
-        webDocs: List[Document] = await crawl_sites(websites_data=websites_data)
+        webDocs: List[Document] = await crawl_sites(configService.FIRECRAWL_API_KEY, websites_data=websites_data)
         allDocs: List[Document] = normalDocs + webDocs
 
         print(f'Total documents loaded: {len(allDocs)}')
@@ -198,7 +192,7 @@ async def createIndexesFromFilesAndUrls(websites_data: List[Dict[str, Any]],
         batch_size, text_splitter = set_batch_and_splitter(len(allDocs))
         embedder = OpenAIEmbeddings(
             model="text-embedding-3-small",
-            api_key=settings.OPENAI_API_KEY
+            api_key=configService.OPENAI_API_KEY
         )
         # embedder = GoogleGenerativeAIEmbeddings(
         #     model_name="gemini-embedding-exp-03-07", task_type="RETRIEVAL_DOCUMENT", 
@@ -231,11 +225,11 @@ async def createIndexesFromFilesAndUrls(websites_data: List[Dict[str, Any]],
         )
 
 
-def saveVirtualIndex(old_namespace: str, organization_id: str = "12345xoz"):
+def saveVirtualIndex(configService: AppConfig, old_namespace: str, organization_id: str = "12345xoz"):
     try:
         # --- Check index exists
-        shared_index_name = settings.INDEX_NAME
-        pc = Pinecone(api_key=settings.PINECONE_API_KEY)
+        shared_index_name = configService.INDEX_NAME
+        pc = Pinecone(api_key=configService.PINECONE_API_KEY)
         index = pc.Index(shared_index_name)
         
         # --- Check namespace exists
@@ -278,11 +272,11 @@ def saveVirtualIndex(old_namespace: str, organization_id: str = "12345xoz"):
             detail=f"An unexpected error occurred: {str(e)}"
         )
 
-def disposeVirtualIndex(old_namespace: str, organization_id: str = "12345xoz"):
+def disposeVirtualIndex(configService: AppConfig, old_namespace: str, organization_id: str = "12345xoz"):
     try:
         # --- Check index exists
-        shared_index_name = settings.INDEX_NAME
-        pc = Pinecone(api_key=settings.PINECONE_API_KEY)
+        shared_index_name = configService.INDEX_NAME
+        pc = Pinecone(api_key=configService.PINECONE_API_KEY)
         index = pc.Index(shared_index_name)
         
         # --- Check namespace exists

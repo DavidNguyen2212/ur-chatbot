@@ -13,7 +13,6 @@ from langchain.chains.history_aware_retriever import create_history_aware_retrie
 from functools import lru_cache
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from pinecone import Pinecone
-from app.core.config import settings
 from app.core.connections import PineconeConnectionPool
 from app.models.chatModel import ChatModel
 # from app.models.ranker import CoolChatVectorStore

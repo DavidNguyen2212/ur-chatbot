@@ -1,7 +1,6 @@
 from typing import List, Dict
 from langchain_core.documents import Document
 from tqdm.asyncio import tqdm_asyncio
-from app.core.config import settings
 import asyncio
 from langchain_community.document_loaders.firecrawl import FireCrawlLoader
 from tqdm.asyncio import tqdm_asyncio
@@ -20,8 +19,8 @@ async def load_site(url: str, priority: int, api_key: str) -> List[Document]:
         print(f"Error while scraping {url}: {e}")
         return []
 
-async def crawl_sites(websites_data: List[Dict]) -> List[Document]:
-    tasks = [load_site(web["url"], web["priority"], settings.FIRECRAWL_API_KEY) for web in websites_data]
+async def crawl_sites(api_key: str, websites_data: List[Dict]) -> List[Document]:
+    tasks = [load_site(web["url"], web["priority"], api_key) for web in websites_data]
     results = await tqdm_asyncio.gather(*tasks, desc="Collecting web info...", unit="site")
     all_documents = [doc for res in results for doc in res if res is not None]
     return all_documents
