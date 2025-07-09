@@ -1,3 +1,20 @@
+// @title Analytics Service API - CoolChat Platform
+// @version 1.0
+// @description API phân tích số liệu chatbot
+// @termsOfService http://swagger.io/terms/
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:4005
+// @BasePath /analytics
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Enter the token with the `Bearer ` prefix, e.g. "Bearer abcde12345".
+
+// @security BearerAuth
 package main
 
 import (

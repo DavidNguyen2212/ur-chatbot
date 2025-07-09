@@ -58,8 +58,8 @@ message GetAllTimeStatsRequest {
     int32 agent_messages = 6;
     int32 ai_messages = 7;
   
-    float avg_messages_per_conversation = 8;
-    float avg_conversation_duration_minutes = 9;
+    double avg_messages_per_conversation = 8;
+    double avg_conversation_duration_minutes = 9;
   
     string first_conversation_date = 10;  // "YYYY-MM-DD"
     string last_conversation_date = 11;

@@ -16,13 +16,13 @@ func RoleGuard(roles ...enums.Role) echo.MiddlewareFunc {
 		return func(c echo.Context) error {
 			user, ok := c.Get("user").(dtos.CoolJwtPayload)
 			if !ok || user.Organization == nil {
-				return response.ErrorResponse(c, http.StatusForbidden, 2001)
+				return response.ErrorResponse(c, http.StatusForbidden, "User doesn't belong to any Organization!")
 			}
 			userRole := enums.Role(strings.ToUpper(user.Organization.Role))
 			if slices.Contains(roles, userRole) {
 				return next(c)
 			}
-			return response.ErrorResponse(c, http.StatusForbidden, 2002)
+			return response.ErrorResponse(c, http.StatusForbidden, "Sorry, you don't have permission")
 		}
 	}
 }

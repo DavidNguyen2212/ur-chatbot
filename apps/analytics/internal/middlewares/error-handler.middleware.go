@@ -7,6 +7,7 @@ import (
 	"runtime/debug"
 
 	"analytics/global"
+	"analytics/pkg/response"
 
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -14,11 +15,11 @@ import (
 
 // ErrorResponse is standard output for error
 // Can expand with fields: traceID, details, ... if needed
-func ErrorResponse(c echo.Context, code int, message string) error {
-	return c.JSON(code, map[string]any{
-		"error":   message,
-		"code":    code,
-		"success": false,
+func ErrorResponse(c echo.Context, statusCode int, message string) error {
+	return c.JSON(statusCode, response.ResponseData{
+		Code:    statusCode,
+		Message: message,
+		Data:    nil,
 	})
 }
 

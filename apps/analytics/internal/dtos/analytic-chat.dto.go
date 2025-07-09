@@ -51,17 +51,17 @@ type DailyChatSummaryDTO struct {
 }
 
 type ChatAllTimeStatsDTO struct {
-	TotalConversations          int32   `json:"total_conversations"`
-	AIConversations             int32   `json:"ai_conversations"`
-	HumanConversations          int32   `json:"human_conversations"`
-	TotalMessages               int32   `json:"total_messages"`
-	CustomerMessages            int32   `json:"customer_messages"`
-	AgentMessages               int32   `json:"agent_messages"`
-	AIMessages                  int32   `json:"ai_messages"`
-	AvgMessagesPerConversation  float32 `json:"avg_messages_per_conversation"`
-	AvgConversationDurationMins float32 `json:"avg_conversation_duration_minutes"`
-	FirstConversationDate       string  `json:"first_conversation_date"`
-	LastConversationDate        string  `json:"last_conversation_date"`
-	BusiestDay                  string  `json:"busiest_day"`
-	BusiestDayConversationCount int32   `json:"busiest_day_conversation_count"`
+	TotalConversations          int32   `json:"total_conversations" example:"1250"`
+	AIConversations             int32   `json:"ai_conversations" example:"800"`
+	HumanConversations          int32   `json:"human_conversations" example:"450"`
+	TotalMessages               int32   `json:"total_messages" example:"9500"`
+	CustomerMessages            int32   `json:"customer_messages" example:"6000"`
+	AgentMessages               int32   `json:"agent_messages" example:"2500"`
+	AIMessages                  int32   `json:"ai_messages" example:"1000"`
+	AvgMessagesPerConversation  float64 `json:"avg_messages_per_conversation" example:"7.6"`
+	AvgConversationDurationMins float64 `json:"avg_conversation_duration_mins" example:"4.2"`
+	BusiestDay                  string  `json:"busiest_day" example:"2025-07-01"`
+	BusiestDayConversationCount int32   `json:"busiest_day_conversation_count" example:"220"`
+	FirstConversationDate       string  `json:"first_conversation_date" example:"2024-01-10"`
+	LastConversationDate        string  `json:"last_conversation_date" example:"2025-07-08"`
 }

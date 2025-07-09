@@ -357,8 +357,8 @@ type GetAllTimeStatsResponse struct {
 	CustomerMessages               int32                  `protobuf:"varint,5,opt,name=customer_messages,json=customerMessages,proto3" json:"customer_messages,omitempty"`
 	AgentMessages                  int32                  `protobuf:"varint,6,opt,name=agent_messages,json=agentMessages,proto3" json:"agent_messages,omitempty"`
 	AiMessages                     int32                  `protobuf:"varint,7,opt,name=ai_messages,json=aiMessages,proto3" json:"ai_messages,omitempty"`
-	AvgMessagesPerConversation     float32                `protobuf:"fixed32,8,opt,name=avg_messages_per_conversation,json=avgMessagesPerConversation,proto3" json:"avg_messages_per_conversation,omitempty"`
-	AvgConversationDurationMinutes float32                `protobuf:"fixed32,9,opt,name=avg_conversation_duration_minutes,json=avgConversationDurationMinutes,proto3" json:"avg_conversation_duration_minutes,omitempty"`
+	AvgMessagesPerConversation     float64                `protobuf:"fixed64,8,opt,name=avg_messages_per_conversation,json=avgMessagesPerConversation,proto3" json:"avg_messages_per_conversation,omitempty"`
+	AvgConversationDurationMinutes float64                `protobuf:"fixed64,9,opt,name=avg_conversation_duration_minutes,json=avgConversationDurationMinutes,proto3" json:"avg_conversation_duration_minutes,omitempty"`
 	FirstConversationDate          string                 `protobuf:"bytes,10,opt,name=first_conversation_date,json=firstConversationDate,proto3" json:"first_conversation_date,omitempty"` // "YYYY-MM-DD"
 	LastConversationDate           string                 `protobuf:"bytes,11,opt,name=last_conversation_date,json=lastConversationDate,proto3" json:"last_conversation_date,omitempty"`
 	BusiestDay                     string                 `protobuf:"bytes,12,opt,name=busiest_day,json=busiestDay,proto3" json:"busiest_day,omitempty"`
@@ -446,14 +446,14 @@ func (x *GetAllTimeStatsResponse) GetAiMessages() int32 {
 	return 0
 }
 
-func (x *GetAllTimeStatsResponse) GetAvgMessagesPerConversation() float32 {
+func (x *GetAllTimeStatsResponse) GetAvgMessagesPerConversation() float64 {
 	if x != nil {
 		return x.AvgMessagesPerConversation
 	}
 	return 0
 }
 
-func (x *GetAllTimeStatsResponse) GetAvgConversationDurationMinutes() float32 {
+func (x *GetAllTimeStatsResponse) GetAvgConversationDurationMinutes() float64 {
 	if x != nil {
 		return x.AvgConversationDurationMinutes
 	}
@@ -531,8 +531,8 @@ const file_proto_chat_chat_proto_rawDesc = "" +
 	"\x0eagent_messages\x18\x06 \x01(\x05R\ragentMessages\x12\x1f\n" +
 	"\vai_messages\x18\a \x01(\x05R\n" +
 	"aiMessages\x12A\n" +
-	"\x1davg_messages_per_conversation\x18\b \x01(\x02R\x1aavgMessagesPerConversation\x12I\n" +
-	"!avg_conversation_duration_minutes\x18\t \x01(\x02R\x1eavgConversationDurationMinutes\x126\n" +
+	"\x1davg_messages_per_conversation\x18\b \x01(\x01R\x1aavgMessagesPerConversation\x12I\n" +
+	"!avg_conversation_duration_minutes\x18\t \x01(\x01R\x1eavgConversationDurationMinutes\x126\n" +
 	"\x17first_conversation_date\x18\n" +
 	" \x01(\tR\x15firstConversationDate\x124\n" +
 	"\x16last_conversation_date\x18\v \x01(\tR\x14lastConversationDate\x12\x1f\n" +

@@ -32,10 +32,27 @@ func NewAnalyticController(
 	}
 }
 
+// SummarizeDailyChat godoc
+// @Summary Tóm tắt thống kê chat trong ngày
+// @Description Lấy dữ liệu tổng hợp cuộc hội thoại theo ngày cho tổ chức của người dùng hiện tại.
+// @Tags Analytics
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param date_exact query string false "Ngày chính xác (format YYYY-MM-DD)"
+// @Param date_gte query string false "Ngày từ (>=) (format YYYY-MM-DD)"
+// @Param date_lte query string false "Ngày đến (<=) (format YYYY-MM-DD)"
+// @Param ordering query string false "Sắp xếp (ví dụ: -date)"
+// @Param page query int false "Số trang"
+// @Param page_size query int false "Số phần tử mỗi trang"
+// @Success 200 {object} dtos.DailyChatSummaryResponse
+// @Failure 400 {object} response.ResponseData "Bad request"
+// @Failure 500 {object} response.ResponseData "Internal server error"
+// @Router /analytics/chats/daily [get]
 func (ac *AnalyticController) SummarizeDailyChat(c echo.Context) error {
 	var query dtos.GetDailyChatSummaryQuery
 	if err := c.Bind(&query); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid query params"})
+		response.ErrorResponse(c, http.StatusBadRequest, "Query params not valid")
 	}
 
 	// Get current user from JWT
@@ -46,7 +63,7 @@ func (ac *AnalyticController) SummarizeDailyChat(c echo.Context) error {
 
 	// Validate date formats
 	if err := query.ValidateDateFormats(); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+		response.ErrorResponse(c, http.StatusBadRequest, "Query params not valid: date")
 	}
 
 	// Create gRPC request
@@ -65,7 +82,7 @@ func (ac *AnalyticController) SummarizeDailyChat(c echo.Context) error {
 	defer chatCancel()
 	resp, err := ac.chatServiceClient.GetDailyChatSummary(chatCtx, req)
 	if err != nil {
-		return response.ErrorResponse(c, http.StatusInternalServerError, 20004)
+		return response.ErrorResponse(c, http.StatusInternalServerError, "Failed to get Daily Chat Summary")
 	}
 
 	// Convert proto response to DTO
@@ -91,9 +108,26 @@ func (ac *AnalyticController) SummarizeDailyChat(c echo.Context) error {
 		}
 	}
 
-	return response.SuccessResponse(c, 20001, result)
+	return response.SuccessResponse(c, result)
 }
 
+// SummarizeMonthlySubscription godoc
+// @Summary Tóm tắt thống kê gói đăng ký theo tháng
+// @Description Lấy dữ liệu tổng hợp về subscription của tổ chức theo từng tháng
+// @Tags Analytics
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param month_exact query string false "Tháng chính xác (YYYY-MM)"
+// @Param month_gte query string false "Tháng từ (>=) (YYYY-MM)"
+// @Param month_lte query string false "Tháng đến (<=) (YYYY-MM)"
+// @Param ordering query string false "Sắp xếp, ví dụ: -month"
+// @Param page query int false "Số trang"
+// @Param page_size query int false "Số phần tử mỗi trang"
+// @Success 200 {object} dtos.MonthlySubscriptionSummaryResponse
+// @Failure 400 {object} response.ResponseData "Bad request"
+// @Failure 500 {object} response.ResponseData "Internal server error"
+// @Router /analytics/monthly-subscription-summary [get]
 func (ac *AnalyticController) SummarizeMonthlySubscription(c echo.Context) error {
 	var query dtos.GetMonthlySubscriptionSummaryQuery
 	if err := c.Bind(&query); err != nil {
@@ -127,7 +161,7 @@ func (ac *AnalyticController) SummarizeMonthlySubscription(c echo.Context) error
 	defer subCancel()
 	resp, err := ac.paymentServiceClient.GetMonthlySubscriptionSummary(subCtx, req)
 	if err != nil {
-		return response.ErrorResponse(c, http.StatusInternalServerError, 20004)
+		return response.ErrorResponse(c, http.StatusInternalServerError, "Cannot get monthly subscription summary")
 	}
 
 	// Convert proto response to DTO
@@ -149,7 +183,7 @@ func (ac *AnalyticController) SummarizeMonthlySubscription(c echo.Context) error
 		}
 	}
 
-	return response.SuccessResponse(c, 20002, result)
+	return response.SuccessResponse(c, result)
 }
 
 func (ac *AnalyticController) SummarizeMonthlyPaymentsReport(c echo.Context) error {
@@ -187,7 +221,7 @@ func (ac *AnalyticController) SummarizeMonthlyPaymentsReport(c echo.Context) err
 
 	resp, err := ac.paymentServiceClient.GetMonthlyPaymentsReport(ctx, req)
 	if err != nil {
-		return response.ErrorResponse(c, http.StatusInternalServerError, 20006)
+		return response.ErrorResponse(c, http.StatusInternalServerError, "Cannot get monthly payments report")
 	}
 
 	// Build response DTO
@@ -220,9 +254,27 @@ func (ac *AnalyticController) SummarizeMonthlyPaymentsReport(c echo.Context) err
 		}
 	}
 
-	return response.SuccessResponse(c, 20003, result)
+	return response.SuccessResponse(c, result)
 }
 
+// SummarizeMonthlyPaymentsReport godoc
+// @Summary Báo cáo thanh toán theo tháng
+// @Description Lấy báo cáo chi tiết các khoản thanh toán trong tháng theo tổ chức
+// @Tags Analytics
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param month_exact query string false "Tháng chính xác (YYYY-MM)"
+// @Param month_gte query string false "Tháng từ (>=) (YYYY-MM)"
+// @Param month_lte query string false "Tháng đến (<=) (YYYY-MM)"
+// @Param ordering query string false "Sắp xếp (ví dụ: -month)"
+// @Param page query int false "Trang"
+// @Param page_size query int false "Kích thước trang"
+// @Success 200 {object} dtos.MonthlyPaymentsReportResponse
+// @Failure 400 {object} response.ResponseData "Bad request"
+// @Failure 403 {object} response.ResponseData "Organization required"
+// @Failure 500 {object} response.ResponseData "Internal server error"
+// @Router /analytics/monthly-payments-report [get]
 func (ac *AnalyticController) SummarizeOrganizationUsageSnapshot(c echo.Context) error {
 	var query dtos.GetOrganizationUsageSnapshotQuery
 	if err := c.Bind(&query); err != nil {
@@ -255,7 +307,7 @@ func (ac *AnalyticController) SummarizeOrganizationUsageSnapshot(c echo.Context)
 
 	resp, err := ac.paymentServiceClient.GetOrganizationUsageSnapshot(ctx, req)
 	if err != nil {
-		return response.ErrorResponse(c, http.StatusInternalServerError, 20007)
+		return response.ErrorResponse(c, http.StatusInternalServerError, "Cannot get Organization Usage Snapshot")
 	}
 
 	// Convert proto to DTO
@@ -283,9 +335,19 @@ func (ac *AnalyticController) SummarizeOrganizationUsageSnapshot(c echo.Context)
 		}
 	}
 
-	return response.SuccessResponse(c, 20008, result)
+	return response.SuccessResponse(c, result)
 }
 
+// SummarizeChatAllTimeStats godoc
+// @Summary Thống kê tổng quan cuộc hội thoại từ trước đến nay
+// @Description Trả về các thống kê tổng hợp cho toàn bộ cuộc hội thoại của tổ chức
+// @Tags Analytics
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} dtos.ChatAllTimeStatsDTO
+// @Failure 500 {object} response.ResponseData "Internal server error"
+// @Router /analytics/chat-all-time-stats [get]
 func (ac *AnalyticController) SummarizeChatAllTimeStats(c echo.Context) error {
 	currentUser := c.Get("user").(dtos.CoolJwtPayload)
 	orgID := currentUser.Organization.ID.String()
@@ -299,7 +361,7 @@ func (ac *AnalyticController) SummarizeChatAllTimeStats(c echo.Context) error {
 
 	resp, err := ac.chatServiceClient.GetAllTimeStats(ctx, req)
 	if err != nil {
-		return response.ErrorResponse(c, http.StatusInternalServerError, 20010)
+		return response.ErrorResponse(c, http.StatusInternalServerError, "Cannot get All time stats")
 	}
 
 	// Convert proto response to DTO
@@ -319,5 +381,5 @@ func (ac *AnalyticController) SummarizeChatAllTimeStats(c echo.Context) error {
 		LastConversationDate:        resp.LastConversationDate,
 	}
 
-	return response.SuccessResponse(c, 20011, result)
+	return response.SuccessResponse(c, result)
 }

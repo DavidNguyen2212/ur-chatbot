@@ -18,7 +18,7 @@ func AuthMiddleware() echo.MiddlewareFunc {
 		return func(c echo.Context) error {
 			authHeader := c.Request().Header.Get("Authorization")
 			if !strings.HasPrefix(authHeader, "Bearer ") {
-				return response.ErrorResponse(c, http.StatusUnauthorized, response.ErrUnauthorizedHeader)
+				return response.ErrorResponse(c, http.StatusUnauthorized, "Unauthorized")
 			}
 
 			tokenString := strings.TrimPrefix(authHeader, "Bearer ")
@@ -31,12 +31,12 @@ func AuthMiddleware() echo.MiddlewareFunc {
 				return []byte(jwtSecret), nil
 			})
 			if err != nil || !token.Valid {
-				return response.ErrorResponse(c, http.StatusUnauthorized, response.ErrInvalidToken)
+				return response.ErrorResponse(c, http.StatusUnauthorized, "Invalid token")
 			}
 
 			claims, ok := token.Claims.(jwt.MapClaims)
 			if !ok {
-				return response.ErrorResponse(c, http.StatusUnauthorized, response.ErrInvalidTokenClaims)
+				return response.ErrorResponse(c, http.StatusUnauthorized, "Invalid token claims")
 			}
 
 			var payload dtos.CoolJwtPayload
