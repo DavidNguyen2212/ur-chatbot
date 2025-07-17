@@ -2,7 +2,7 @@ import asyncio
 from datetime import datetime
 import json
 import os
-from typing import Any, List, Optional, Dict, ClassVar, override
+from typing import List, Optional, ClassVar
 from langchain.tools import Tool
 from langchain.agents import AgentExecutor, create_openai_tools_agent
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -12,24 +12,22 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.history_aware_retriever import create_history_aware_retriever
 from functools import lru_cache
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from pinecone import Pinecone
-from app.core.connections import PineconeConnectionPool
+from app.core.pinecone_pool import PineconeConnectionPool
 from app.models.chatModel import ChatModel
+
 # from app.models.ranker import CoolChatVectorStore
 from app.models.ranker_new import CoolChatVectorStore
 
-from langchain.callbacks.base import BaseCallbackHandler
 from langchain.tools.base import BaseTool
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun
 import aiohttp  # HTTP async request
-from langchain.schema.runnable import RunnableConfig
 from langchain_core.messages import HumanMessage, AIMessage
 from app.utils.summarizer import tokenize_and_summarize_openai
 from cachetools import TTLCache, cached
 
 NOTIFICATION_ENDPOINT = os.environ.get(
-    "NOTIFICATION_ENDPOINT", 
-    "https://webhook.site/aec3b4e7-5611-45d5-b267-515d0f486a90"  # Endpoint for testing with end_conversation tool.
+    "NOTIFICATION_ENDPOINT",
+    "https://webhook.site/aec3b4e7-5611-45d5-b267-515d0f486a90",  # Endpoint for testing with end_conversation tool.
 )
 
 # Constants
@@ -37,7 +35,9 @@ CACHE_TTL = 3600  # 1 hour
 DEFAULT_COMPANY = "CoolChat Consulting Company"
 DEFAULT_ATTITUDE = "professional"
 DEFAULT_START_MSG = "Chào bạn, đây là ban tư vấn khách hàng của công ty chúng tôi"
-DEFAULT_END_MSG = "Cảm ơn quý khách đã trò chuyện. Hẹn gặp lại quý khách trong thời gian sớm nhất!"
+DEFAULT_END_MSG = (
+    "Cảm ơn quý khách đã trò chuyện. Hẹn gặp lại quý khách trong thời gian sớm nhất!"
+)
 
 # Cache configurations
 RETRIEVER_CACHE_SIZE = 100
@@ -52,58 +52,66 @@ _retriever_cache = TTLCache(maxsize=RETRIEVER_CACHE_SIZE, ttl=CACHE_TTL)
 _history_aware_retriever_cache = TTLCache(maxsize=100, ttl=CACHE_TTL)
 _unified_agent_cache = TTLCache(maxsize=AGENT_CACHE_SIZE, ttl=CACHE_TTL)
 
+
 # Static prompt - giữ lru_cache
 @lru_cache(maxsize=1)
 def get_prompts():
     return pull("langchain-ai/chat-langchain-rephrase")
 
+
 # Dynamic components - dùng TTLCache
 @cached(cache=_model_cache)
 def get_model():
     return ChatOpenAI(
-        model="gpt-3.5-turbo", 
-        temperature=0.7, 
-        api_key=settings.OPENAI_API_KEY, 
-        streaming=True
+        model="gpt-3.5-turbo",
+        temperature=0.7,
+        api_key=settings.OPENAI_API_KEY,
+        streaming=True,
     )
+
 
 @cached(cache=_embedder_cache)
 def get_embedder():
     return OpenAIEmbeddings(
-        model="text-embedding-3-small", 
-        api_key=settings.OPENAI_API_KEY
+        model="text-embedding-3-small", api_key=settings.OPENAI_API_KEY
     )
+
 
 @cached(cache=_retriever_cache)
 def get_retriever_cached(index_host: str, namespace: str):
     return get_retriever(index_host, namespace)
 
+
 @cached(cache=_history_aware_retriever_cache)
 def get_history_aware_retriever_cached(index_host: str, namespace: str):
     return get_history_aware_retriever(index_host, namespace)
+
 
 @cached(cache=_prompt_cache)
 def get_cached_qa_prompt(chatbot_attitude: str) -> ChatPromptTemplate:
     return get_qa_prompt_template(chatbot_attitude)
 
+
 @cached(cache=_unified_agent_cache)
 def get_cached_unified_agent(
-    db_host: str, 
-    namespace: str, 
+    db_host: str,
+    namespace: str,
     company_name: str,
     chatbot_attitude: str,
     start_sentence: str,
-    end_sentence: str
+    end_sentence: str,
 ):
     model = get_model()
     return create_unified_agent(
-        model, db_host, 
+        model,
+        db_host,
         namespace=namespace,
         company_name=company_name,
         chatbot_attitude=chatbot_attitude,
         start_sentence=start_sentence,
-        end_sentence=end_sentence
+        end_sentence=end_sentence,
     )
+
 
 def get_retriever(index_host: str, namespace: str):
     # pc = Pinecone(api_key=settings.PINECONE_API_KEY)
@@ -118,15 +126,13 @@ def get_history_aware_retriever(index_host: str, namespace: str):
     retriever = get_retriever_cached(index_host, namespace)
     rephrase_prompt = get_prompts()
     return create_history_aware_retriever(
-        llm=get_model(),
-        retriever=retriever,
-        prompt=rephrase_prompt
+        llm=get_model(), retriever=retriever, prompt=rephrase_prompt
     )
 
 
 def create_end_conversation_tool(end_sentence: str):
     """Create a tool for ending the conversation."""
-    
+
     def end_conversation(input_text: str = "") -> str:
         """
         Use this tool when the user wants to end the conversation or say goodbye.
@@ -135,12 +141,13 @@ def create_end_conversation_tool(end_sentence: str):
         """
 
         return end_sentence
-    
+
     return Tool.from_function(
         func=end_conversation,
         name="end_conversation",
-        description="Use this when the user is saying goodbye or wants to end the conversation"
+        description="Use this when the user is saying goodbye or wants to end the conversation",
     )
+
 
 async def notify_conversation_end(session_id: str):
     """Gửi thông báo đến backend rằng cuộc trò chuyện đã kết thúc."""
@@ -150,56 +157,72 @@ async def notify_conversation_end(session_id: str):
             "conv_id": session_id,
             "is_end": True,
         }
-        
+
         # Log thông tin ra console để debug
-        print(f"Sending end notification for session {session_id} to {NOTIFICATION_ENDPOINT}")
+        print(
+            f"Sending end notification for session {session_id} to {NOTIFICATION_ENDPOINT}"
+        )
         print(f"Payload: {json.dumps(payload, indent=2)}")
-        
+
         # Gửi request đến endpoint
         async with aiohttp.ClientSession() as session:
             async with session.post(NOTIFICATION_ENDPOINT, json=payload) as response:
                 response_text = await response.text()
                 status = response.status
-                
+
                 # Log kết quả
                 print(f"Notification result: Status={status}")
-                print(f"Response: {response_text[:200]}...")  # Hiển thị 200 ký tự đầu của response
-                
+                print(
+                    f"Response: {response_text[:200]}..."
+                )  # Hiển thị 200 ký tự đầu của response
+
                 # Lưu vào file log để xem lại sau (tuỳ chọn)
                 with open("notification_log.txt", "a") as f:
-                    f.write(f"[{datetime.now().isoformat()}] Session: {session_id}, Status: {status}\n")
-                    
+                    f.write(
+                        f"[{datetime.now().isoformat()}] Session: {session_id}, Status: {status}\n"
+                    )
+
                 return status == 200
 
     except Exception as e:
         print(f"Error in notification: {str(e)}")
         # Lưu lỗi vào file log (tuỳ chọn)
         with open("notification_error_log.txt", "a") as f:
-            f.write(f"[{datetime.now().isoformat()}] Error for session {session_id}: {str(e)}\n")
+            f.write(
+                f"[{datetime.now().isoformat()}] Error for session {session_id}: {str(e)}\n"
+            )
         return False
+
 
 def get_qa_prompt_template(chatbot_attitude: str) -> ChatPromptTemplate:
     """Tạo prompt template dựa trên chatbot attitude"""
-    return ChatPromptTemplate.from_messages([
-        ("system", f"""Trả lời câu hỏi của khách hàng dựa trên thông tin từ cơ sở tri thức sau bằng Tiếng Việt (giữ lại các jargon tiếng Anh nếu có):
+    return ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                f"""Trả lời câu hỏi của khách hàng dựa trên thông tin từ cơ sở tri thức sau bằng Tiếng Việt (giữ lại các jargon tiếng Anh nếu có):
         
         {{context}}
 
         Hướng dẫn:
         - Cung cấp câu trả lời DỰA TRÊN THÔNG TIN ĐÃ TRUY XUẤT. Luôn trả lời theo phong cách {chatbot_attitude}.
         - Nếu thông tin không đủ để trả lời câu hỏi, hãy thông báo lịch sự rằng thông tin đó không có sẵn. Bạn không được self-generated câu trả lời để tránh gây hiểu nhầm.
-        """),
-        MessagesPlaceholder(variable_name="chat_history"),
-        ("human", "{input}")
-    ])
+        """,
+            ),
+            MessagesPlaceholder(variable_name="chat_history"),
+            ("human", "{input}"),
+        ]
+    )
 
 
 class AsyncRAGTool(BaseTool):
     """Tool for performing RAG with async support."""
-    
+
     name: ClassVar[str] = "answer_question"
-    description: ClassVar[str] = "Use this to answer user questions by retrieving relevant information"
-    
+    description: ClassVar[str] = (
+        "Use this to answer user questions by retrieving relevant information"
+    )
+
     def __init__(self, db_host: str, namespace: str, chatbot_attitude: str):
         super().__init__()
         self._db_host = db_host
@@ -209,47 +232,55 @@ class AsyncRAGTool(BaseTool):
     def _run(self, query: str, chat_history=[]) -> str:
         """Synchronous run method - required but not used."""
         raise NotImplementedError("This tool only supports async execution")
-    
+
     async def _arun(
-        self, 
-        query: str, 
-        chat_history=[], 
-        run_manager: Optional[AsyncCallbackManagerForToolRun] = None
+        self,
+        query: str,
+        chat_history=[],
+        run_manager: Optional[AsyncCallbackManagerForToolRun] = None,
     ):
         """Asynchronous run method that performs RAG."""
         retriever = get_history_aware_retriever_cached(
-            index_host=self._db_host, 
-            namespace=self._namespace
+            index_host=self._db_host, namespace=self._namespace
         )
         # Get cached prompt template
         prompt_template = get_cached_qa_prompt(self._chatbot_attitude)
 
         # Create model instance with callbacks if needed
         llm = get_model()
-        
+
         # Create chain - không cache vì phụ thuộc callbacks
         question_answer_chain = create_stuff_documents_chain(
-            llm=llm,
-            prompt=prompt_template
+            llm=llm, prompt=prompt_template
         )
-        
+
         rag_chain = create_retrieval_chain(
-            retriever=retriever, 
-            combine_docs_chain=question_answer_chain
+            retriever=retriever, combine_docs_chain=question_answer_chain
         )
-        
-        result = await rag_chain.ainvoke(
-            {"input": query, "chat_history": chat_history}
-        )
+
+        result = await rag_chain.ainvoke({"input": query, "chat_history": chat_history})
         return result["answer"]
+
 
 def create_rag_tool(db_host: str, namespace: str, chatbot_attitude: str):
     """Create a tool that performs RAG for answering questions."""
-    return AsyncRAGTool(db_host=db_host, namespace=namespace, chatbot_attitude=chatbot_attitude)
+    return AsyncRAGTool(
+        db_host=db_host, namespace=namespace, chatbot_attitude=chatbot_attitude
+    )
 
-def create_unified_agent(llm, db_host: str, streaming_handler=None, namespace: str = None, company_name: str = "CoolChat Consulting Company", chatbot_attitude: str = "professional", start_sentence: str = "Chào bạn, đây là ban tư vấn khách hàng của công ty chúng tôi", end_sentence: str = "Cảm ơn quý khách đã trò chuyện. Hẹn gặp lại quý khách trong thời gian sớm nhất!"):
+
+def create_unified_agent(
+    llm,
+    db_host: str,
+    streaming_handler=None,
+    namespace: str = None,
+    company_name: str = "CoolChat Consulting Company",
+    chatbot_attitude: str = "professional",
+    start_sentence: str = "Chào bạn, đây là ban tư vấn khách hàng của công ty chúng tôi",
+    end_sentence: str = "Cảm ơn quý khách đã trò chuyện. Hẹn gặp lại quý khách trong thời gian sớm nhất!",
+):
     """Create a unified agent that can detect goodbyes and perform RAG."""
-    
+
     end_conversation_tool = create_end_conversation_tool(end_sentence=end_sentence)
     rag_tool = create_rag_tool(db_host, namespace, chatbot_attitude)
 
@@ -291,34 +322,45 @@ def create_unified_agent(llm, db_host: str, streaming_handler=None, namespace: s
     )
 
 
-async def response_from_LLM(session_id: str, query: str, 
-            db_host: str, namespace: str,
-            company_name: str = "CoolChat Consulting Company", chatbot_attitude: str = "professional", start_sentence: str = "Chào bạn, đây là ban tư vấn khách hàng của công ty chúng tôi",
-            end_sentence: str = "Cảm ơn quý khách đã trò chuyện. Hẹn gặp lại quý khách trong thời gian sớm nhất!"
+async def response_from_LLM(
+    session_id: str,
+    query: str,
+    db_host: str,
+    namespace: str,
+    company_name: str = "CoolChat Consulting Company",
+    chatbot_attitude: str = "professional",
+    start_sentence: str = "Chào bạn, đây là ban tư vấn khách hàng của công ty chúng tôi",
+    end_sentence: str = "Cảm ơn quý khách đã trò chuyện. Hẹn gặp lại quý khách trong thời gian sớm nhất!",
 ):
     model = get_model()
-    
+
     # Lấy lịch sử cuộc trò chuyện
     conversation = await ChatModel.get(document_id=session_id)
     langchain_history = ChatModel.convert_to_langchain_history(conversation.memory)
-    
+
     # Tạo agent thống nhất (không cần streaming_handler)
     unified_agent = get_cached_unified_agent(
-        db_host, namespace, company_name, 
-        chatbot_attitude, start_sentence, end_sentence
+        db_host, namespace, company_name, chatbot_attitude, start_sentence, end_sentence
     )
-    
+
     # Sử dụng hàng đợi để streaming
     streaming_queue = asyncio.Queue()
     is_ending = False
-    
+
     async def stream_agent_response():
         end_signal_received = False
-        async for event in unified_agent.astream_events({"input": query, "chat_history": langchain_history}, version='v2'):
-            if event["event"] == "on_tool_start" and event["name"] == "end_conversation":
+        async for event in unified_agent.astream_events(
+            {"input": query, "chat_history": langchain_history}, version="v2"
+        ):
+            if (
+                event["event"] == "on_tool_start"
+                and event["name"] == "end_conversation"
+            ):
                 await streaming_queue.put("[END_SIGNAL]")
                 end_signal_received = True
-            elif event["event"] == "on_tool_end" and event["name"] == "end_conversation":
+            elif (
+                event["event"] == "on_tool_end" and event["name"] == "end_conversation"
+            ):
                 # Lấy câu trả lời từ công cụ và gửi vào hàng đợi
                 tool_output = event["data"]["output"]
                 await streaming_queue.put(tool_output)
@@ -327,13 +369,13 @@ async def response_from_LLM(session_id: str, query: str,
                 await streaming_queue.put(token)
             elif end_signal_received:
                 break
-        
+
     # Bắt đầu task streaming
     agent_task = asyncio.create_task(stream_agent_response())
-    
+
     accumulated_response = ""
     save_task_started = False
-    
+
     # Streaming từ hàng đợi
     while True:
         try:
@@ -346,50 +388,59 @@ async def response_from_LLM(session_id: str, query: str,
         except asyncio.TimeoutError:
             if agent_task.done():
                 break
-    
+
     # Lưu lịch sử cuộc trò chuyện sau khi streaming
     if not save_task_started:
         save_task_started = True
-        asyncio.create_task(save_chat_history_and_memory(
-            chat=conversation, 
-            query=query, 
-            response=accumulated_response, 
-            old_history=langchain_history,
-            is_end=is_ending
-        ))
-    
+        asyncio.create_task(
+            save_chat_history_and_memory(
+                chat=conversation,
+                query=query,
+                response=accumulated_response,
+                old_history=langchain_history,
+                is_end=is_ending,
+            )
+        )
+
     # Thông báo kết thúc cuộc trò chuyện nếu cần
     if is_ending:
         asyncio.create_task(notify_conversation_end(session_id))
 
-async def save_chat_history_and_memory(chat: ChatModel, query: str, response: str, old_history: List[AIMessage | HumanMessage], is_end: bool):
+
+async def save_chat_history_and_memory(
+    chat: ChatModel,
+    query: str,
+    response: str,
+    old_history: List[AIMessage | HumanMessage],
+    is_end: bool,
+):
     # print("User: ", query)
     # print("AI: ", response)
     chat.conversations.append([query, response])
     if len(old_history) != 0:
-        old_context: str = " ".join([msg.content for msg in old_history]) 
+        old_context: str = " ".join([msg.content for msg in old_history])
         new_context, context_summarized = tokenize_and_summarize_openai(
             old_context, query, response, max_token=2048
         )
     else:
         old_context = ""
         context_summarized = False
-    
+
     if context_summarized:
         # chat.memory = [new_context]
-        chat.memory = [{ "type": "human", "content": new_context }]
+        chat.memory = [{"type": "human", "content": new_context}]
     else:
         chat.memory += [
-                {
-                    "type": "human",
-                    "content": query,
-                }, 
-                {
-                    "type": "ai",
-                    "content": response,
-                }
-            ]
-    
+            {
+                "type": "human",
+                "content": query,
+            },
+            {
+                "type": "ai",
+                "content": response,
+            },
+        ]
+
     if is_end:
         updated_chat = await chat.close_session()
     else:

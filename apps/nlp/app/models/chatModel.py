@@ -5,12 +5,17 @@ from beanie import Document, PydanticObjectId
 import datetime
 from langchain.schema import AIMessage, HumanMessage
 
+
 class ChatModel(Document):
     memory: List[Dict[str, Any]] = Field(default_factory=list)
     conversations: List[List[str]] = Field(default_factory=list)
     is_active: bool = Field(default=True)
-    created_at: datetime.datetime = Field(default_factory=lambda: datetime.datetime.now(datetime.timezone.utc))
-    updated_at: datetime.datetime = Field(default_factory=lambda: datetime.datetime.now(datetime.timezone.utc))
+    created_at: datetime.datetime = Field(
+        default_factory=lambda: datetime.datetime.now(datetime.timezone.utc)
+    )
+    updated_at: datetime.datetime = Field(
+        default_factory=lambda: datetime.datetime.now(datetime.timezone.utc)
+    )
 
     @field_validator("conversations", mode="before")
     def validate_conversations(cls, value):
@@ -20,7 +25,9 @@ class ChatModel(Document):
             return value
         for item in value:
             if not (len(item) == 2 and all(isinstance(i, str) for i in item)):
-                raise ValueError("Each conversation must be a list containing exactly two strings.")
+                raise ValueError(
+                    "Each conversation must be a list containing exactly two strings."
+                )
         return value
 
     @classmethod
@@ -30,12 +37,12 @@ class ChatModel(Document):
         """
         try:
             new_session = cls()
-            await new_session.insert()  
+            await new_session.insert()
             return new_session
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Database error: {str(e)}"
+                detail=f"Database error: {str(e)}",
             )
 
     @classmethod
@@ -49,7 +56,7 @@ class ChatModel(Document):
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Error retrieving session: {str(e)}"
+                detail=f"Error retrieving session: {str(e)}",
             )
 
     async def save_session(self) -> "ChatModel":
@@ -58,12 +65,12 @@ class ChatModel(Document):
         """
         self.updated_at = datetime.datetime.now(datetime.timezone.utc)
         try:
-            await self.save() 
+            await self.save()
             return self
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Error saving session: {str(e)}"
+                detail=f"Error saving session: {str(e)}",
             )
 
     async def update_memory(self, new_messages: List[Dict[str, Any]]) -> "ChatModel":
@@ -88,18 +95,21 @@ class ChatModel(Document):
         return await self.save_session()
 
     @classmethod
-    def convert_to_langchain_history(cls, memory: List[Dict]) -> List[Union[AIMessage, HumanMessage]]:
+    def convert_to_langchain_history(
+        cls, memory: List[Dict]
+    ) -> List[Union[AIMessage, HumanMessage]]:
         """
         Chuyển đổi memory sang định dạng langchain history.
         """
         return [
-            AIMessage(**msg) if msg.get("type") == "ai" 
-            else HumanMessage(**msg)
+            AIMessage(**msg) if msg.get("type") == "ai" else HumanMessage(**msg)
             for msg in memory
         ]
 
     @classmethod
-    def convert_from_langchain_history(cls, messages: List[Union[AIMessage, HumanMessage]]) -> List[Dict]:
+    def convert_from_langchain_history(
+        cls, messages: List[Union[AIMessage, HumanMessage]]
+    ) -> List[Dict]:
         """
         Chuyển đổi từ langchain history sang định dạng memory lưu trong database.
         """
@@ -107,7 +117,7 @@ class ChatModel(Document):
             {
                 "type": "ai" if isinstance(msg, AIMessage) else "human",
                 "content": msg.content,
-                **msg.additional_kwargs
+                **msg.additional_kwargs,
             }
             for msg in messages
         ]

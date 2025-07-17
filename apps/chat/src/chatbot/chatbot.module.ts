@@ -5,6 +5,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ChatbotListener } from './chatbot.listener';
 import { ChatbotConfig, ChatbotConfigSchema } from './schemas/chatbot-config.schema';
 import { MongooseModule } from '@nestjs/mongoose';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { MongooseModule } from '@nestjs/mongoose';
         }
       }
     ]),
-    MongooseModule.forFeature([{ name: ChatbotConfig.name, schema: ChatbotConfigSchema }])
+    MongooseModule.forFeature([{ name: ChatbotConfig.name, schema: ChatbotConfigSchema }]),
+    SharedModule
   ],
   controllers: [ChatbotController, ChatbotListener],
   providers: [ChatbotService],

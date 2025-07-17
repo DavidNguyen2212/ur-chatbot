@@ -1,5 +1,6 @@
 import { SendEmailCommand } from '@aws-sdk/client-ses'
 import { sesClient } from './ses.client'
+import { logger } from '../../utils/logger'
 
 interface EmailPayload {
   fromAddress: string
@@ -75,7 +76,7 @@ export const sendEmail = async (
 
   try {
     const response = await sesClient.send(sendEmailCommand)
-    console.log('Email sent successfully!')
+    logger.info('Email sent successfully!')
     return response
   } catch (error) {
     console.error('Failed to send email.', error)

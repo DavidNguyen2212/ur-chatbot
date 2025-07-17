@@ -2,15 +2,18 @@ from functools import lru_cache
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from app.core.config import get_config
 
+
 @lru_cache()
 def get_engine():
     config = get_config()
     return create_async_engine(
-        config.DATABASE_URL,
+        config.DATABASE_URL.replace("?sslmode=require", ""),  # Clean URL
+        connect_args={"ssl": True},
         echo=False,
         future=True,
         pool_pre_ping=True,
     )
+
 
 @lru_cache()
 def get_session_maker():
@@ -19,6 +22,7 @@ def get_session_maker():
         class_=AsyncSession,
         expire_on_commit=False,
     )
+
 
 async def get_db():
     SessionLocal = get_session_maker()

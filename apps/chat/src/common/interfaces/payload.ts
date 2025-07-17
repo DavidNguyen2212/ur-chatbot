@@ -1,8 +1,10 @@
+import { UUID } from "crypto";
+
 export interface CoolJwtPayload {
-  userId: string;
+  userId: UUID;
   email: string;
   organization?: {
-    id: string;
+    id: UUID;
     name: string;
     role: string;
   };

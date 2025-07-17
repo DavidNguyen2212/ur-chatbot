@@ -1,5 +1,6 @@
 import dotenv
 from gen_test import make_testcases
+
 dotenv.load_dotenv()
 import pytest
 from deepeval import assert_test
@@ -22,7 +23,9 @@ def test_bias(test_case: LLMTestCase):
     metrics = [BiasMetric()]
     assert_test(test_case, metrics)
 
+
 import deepeval
+
 
 @deepeval.on_test_run_end
 def after_test_run():

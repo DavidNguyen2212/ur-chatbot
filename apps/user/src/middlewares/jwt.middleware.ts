@@ -3,17 +3,7 @@ import { verify } from 'jsonwebtoken';
 import { AUTH } from '../constants/auth.constant';
 import { prisma } from '../infra/prisma/prisma.client';
 import { ErrorWithStatus } from '../interfaces/Errors';
-
-interface CoolJwtPayload {
-  userId: string;
-  email: string;
-  organization?: {
-    id: string;
-    name: string;
-    role: string;
-  };
-  jti?: string;
-}
+import { CoolJwtPayload } from '../interfaces/user';
 
 export const jwtAuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -68,7 +58,6 @@ export const jwtAuthMiddleware = async (req: Request, res: Response, next: NextF
 
     // Attach user to request
     req.user = userPayload;
-    console.log(userPayload);
     
     next();
   } catch (error: any) {

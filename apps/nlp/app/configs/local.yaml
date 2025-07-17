@@ -1,8 +1,11 @@
 logger:
   level: "INFO"
-  format: "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
-  log_file: "logs/app.log"
+  format: "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <4}</level> | <cyan>{process}</cyan>:<cyan>{thread}</cyan> | <magenta>{name}</magenta>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>"
+  log_file: "logs/app"
   rotation: "1 day"       # Hoặc: "100 MB"
   retention: "7 days"
   compression: "zip"
   serialize: false         # true = ghi log dạng JSON
+kafka:
+  broker: "localhost:9092"
+  client_id: "nlp-service"

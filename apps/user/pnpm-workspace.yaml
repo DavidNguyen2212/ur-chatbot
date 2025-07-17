@@ -3,4 +3,6 @@ onlyBuiltDependencies:
   - '@prisma/engines'
   - '@scarf/scarf'
   - esbuild
+  - grpc-tools
   - prisma
+  - protobufjs

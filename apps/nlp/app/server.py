@@ -1,33 +1,51 @@
+from fastapi.exceptions import RequestValidationError
 import sentry_sdk
-from fastapi import FastAPI
-from fastapi.routing import APIRoute
+from fastapi import FastAPI, HTTPException
 from starlette.middleware.cors import CORSMiddleware
+from app.api import api_router
+from app.core import (
+    get_config,
+    setup_logger,
+    custom_generate_unique_id,
+    lifespan,
+    custom_openapi,
+)
+from app.middlewares.auth import AuthMiddleware
+from app.middlewares.trace import TraceMiddleware
+from app.middlewares.error import (
+    custom_exception_handler,
+    database_exception_handler,
+    general_exception_handler,
+    http_exception_handler,
+    validation_exception_handler,
+)
+from sqlalchemy.exc import SQLAlchemyError
+from app.schemas.exceptions import BaseCustomException
 
-from app.core.config import get_config
-from app.core.logger import setup_logger
-from app.api.main import api_router
-from app.middleware.auth import VerifyInternalKeyMiddleware
-from fastapi.openapi.utils import get_openapi
 
-
-def custom_generate_unique_id(route: APIRoute) -> str:
-    return f"{route.tags[0]}-{route.name}"
-
-# Load env and config
+# Config and Logger
 config = get_config()
-# Set up loguru
 setup_logger(config)
 
 if config.SENTRY_DSN and config.ENVIRONMENT != "local":
     sentry_sdk.init(dsn=str(config.SENTRY_DSN), enable_tracing=True)
 
+# Initilize app
 app = FastAPI(
     title=config.PROJECT_NAME,
-    openapi_url=f"/openapi.json",
+    openapi_url="/openapi.json",
     generate_unique_id_function=custom_generate_unique_id,
+    lifespan=lifespan,
 )
 
-# Set all CORS enabled origins
+# Register exception handlers
+app.add_exception_handler(BaseCustomException, custom_exception_handler)
+app.add_exception_handler(HTTPException, http_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(SQLAlchemyError, database_exception_handler)
+app.add_exception_handler(Exception, general_exception_handler)
+
+# Middleware setup
 if config.BACKEND_CORS_ORIGINS == ["*"]:
     app.add_middleware(
         CORSMiddleware,
@@ -44,34 +62,11 @@ else:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-app.add_middleware(VerifyInternalKeyMiddleware, config.AI_SERVICE_API_KEY)
+app.add_middleware(TraceMiddleware)
+app.add_middleware(AuthMiddleware)
 
+# Router
 app.include_router(api_router)
 
-def custom_openapi():
-    if app.openapi_schema:
-        return app.openapi_schema
-    
-    openapi_schema = get_openapi(
-        title=app.title,
-        version=app.version,
-        description=app.description,
-        routes=app.routes
-    )
-
-    openapi_schema["components"]["securitySchemes"] = {
-        "BearerAuth": {
-            "type": "http",
-            "scheme": "bearer",
-            "bearerFormat": "apiKey",  
-            "description": "Enter AI Service's API key"
-        }
-    }
-
-    for path in openapi_schema["paths"].values():
-        for method in path.values():
-            method["security"] = [{"BearerAuth": []}]
-    app.openapi_schema = openapi_schema
-    return app.openapi_schema
-
-app.openapi = custom_openapi
+# Swagger setup here
+app.openapi = custom_openapi(app)
