@@ -1,14 +1,19 @@
 import dotenv
 from gen_test import make_testcases
+
 dotenv.load_dotenv()
-import pandas as pd
 import pytest
 import os
+
 os.environ["DEEPEVAL_RESULTS_FOLDER"] = "./test_results"
 from deepeval import assert_test
 from deepeval.test_case import LLMTestCase
 from deepeval.dataset import EvaluationDataset
-from deepeval.metrics import ContextualRelevancyMetric, ContextualPrecisionMetric, ContextualRecallMetric, ContextualRelevancyMetric
+from deepeval.metrics import (
+    ContextualPrecisionMetric,
+    ContextualRecallMetric,
+    ContextualRelevancyMetric,
+)
 
 dataset = EvaluationDataset(test_cases=make_testcases(filename="try.xlsx"))
 
@@ -27,11 +32,13 @@ def test_retrieval(test_case: LLMTestCase):
     metrics = [
         ContextualRelevancyMetric(),
         ContextualPrecisionMetric(),
-        ContextualRecallMetric()
+        ContextualRecallMetric(),
     ]
     assert_test(test_case, metrics)
 
+
 import deepeval
+
 
 @deepeval.on_test_run_end
 def after_test_run():

@@ -1,0 +1,192 @@
+2025-07-16 01:32:05 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:32:48 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:32:48 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:33:00 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:33:00 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:33:45 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:33:45 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:34:04 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:34:04 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:35:08 [[32minfo[39m]: A caller call to this method - getUser
+2025-07-16 01:35:52 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:35:52 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:35:56 [[32minfo[39m]: [UserGrpcService - Server] Caller call to this method - getUser
+2025-07-16 01:36:16 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:36:16 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:37:35 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:37:35 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:37:38 [[32minfo[39m]: [UserGrpcService - Server - UserGrpcService] Caller call to method - getUser
+2025-07-16 01:38:04 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:38:04 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:38:08 [[32minfo[39m]: [UserGrpcService - Server] Caller call to method - getUser
+2025-07-16 01:51:03 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:51:03 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:52:12 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:52:12 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:52:32 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:52:32 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:53:12 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:53:12 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:53:56 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:53:56 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:54:12 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:54:12 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:54:30 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:54:30 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:55:29 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:55:29 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:55:41 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:55:41 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:56:52 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:56:52 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 01:59:56 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 01:59:56 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 02:00:13 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 02:00:13 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 02:00:53 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 02:00:53 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 02:01:59 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 02:01:59 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 02:05:30 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 02:05:30 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 02:07:42 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 02:07:42 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 02:08:11 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 02:08:12 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 02:08:23 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 02:08:23 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 02:08:33 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 02:08:33 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 02:09:03 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 02:09:03 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 02:09:46 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 02:09:46 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 02:10:23 [[32minfo[39m]: User-Service now listening on port 4000
+2025-07-16 02:10:23 [[32minfo[39m]: 🚀 gRPC User Service (Server) running at 50051
+2025-07-16 02:11:02 [[32minfo[39m]: [UserGrpcService - Server] Caller call to method - getUser
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:13:01"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:13:01"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:13:32"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:13:32"}
+{"caller":{"column":"24","file":"combine.js","fullPath":"D:\\chatbot_platform\\apps\\user\\node_modules\\.pnpm\\logform@2.7.0\\node_modules\\logform\\combine.js","function":"Format.transform","line":"20"},"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:15:04"}
+{"caller":{"column":"24","file":"combine.js","fullPath":"D:\\chatbot_platform\\apps\\user\\node_modules\\.pnpm\\logform@2.7.0\\node_modules\\logform\\combine.js","function":"Format.transform","line":"20"},"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:15:04"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:16:47"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:16:47"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:17:10"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:17:10"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:18:17"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:18:17"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:18:24"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:18:24"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:19:06"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:19:06"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:20:02"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:20:02"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:26:19"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:26:19"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:31:54"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:31:54"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:32:24"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:32:24"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:32:34"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:32:34"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:34:43"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:34:43"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:34:57"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:34:57"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:37:12"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:37:12"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:37:47"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:37:47"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:38:13"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:38:13"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:38:29"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:38:29"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:49:51"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:49:51"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:50:08"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:50:08"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:53:10"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:53:10"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 02:59:03"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 02:59:03"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 03:02:38"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 03:02:38"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 03:03:25"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 03:03:25"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 03:04:22"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 03:04:22"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 03:04:31"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 03:04:31"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 03:04:53"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 03:04:53"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 03:05:47"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 03:05:47"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 03:06:06"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 03:06:06"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 03:06:42"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 03:06:42"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 03:10:39"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 03:10:39"}
+{"level":"info","message":[],"timestamp":"2025-07-16 03:10:43"}
+{"level":"info","message":["00f059ed-8e23-4862-926f-2469eb422efe","14de027a-b797-4f95-85e7-ae8790e10477","b38e359f-be44-4692-a368-929cc861de0d"],"timestamp":"2025-07-16 03:12:09"}
+{"level":"info","message":["00f059ed-8e23-4862-926f-2469eb422efe","14de027a-b797-4f95-85e7-ae8790e10477","b38e359f-be44-4692-a368-929cc861de0d"],"timestamp":"2025-07-16 03:14:02"}
+{"level":"info","message":["00f059ed-8e23-4862-926f-2469eb422efe","14de027a-b797-4f95-85e7-ae8790e10477","b38e359f-be44-4692-a368-929cc861de0d"],"timestamp":"2025-07-16 03:14:13"}
+{"level":"info","message":["00f059ed-8e23-4862-926f-2469eb422efe","14de027a-b797-4f95-85e7-ae8790e10477","b38e359f-be44-4692-a368-929cc861de0d"],"timestamp":"2025-07-16 03:14:16"}
+{"level":"info","message":["00f059ed-8e23-4862-926f-2469eb422efe","14de027a-b797-4f95-85e7-ae8790e10477","b38e359f-be44-4692-a368-929cc861de0d","dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 03:14:27"}
+{"level":"info","message":["00f059ed-8e23-4862-926f-2469eb422efe","14de027a-b797-4f95-85e7-ae8790e10477","b38e359f-be44-4692-a368-929cc861de0d","dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 03:14:45"}
+{"level":"info","message":["00f059ed-8e23-4862-926f-2469eb422efe","14de027a-b797-4f95-85e7-ae8790e10477","b38e359f-be44-4692-a368-929cc861de0d","dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 03:57:34"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 04:09:32"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 04:15:03"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 04:17:01"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 04:18:43"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 04:22:11"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 04:23:14"}
+{"level":"info","message":["00f059ed-8e23-4862-926f-2469eb422efe","14de027a-b797-4f95-85e7-ae8790e10477","b38e359f-be44-4692-a368-929cc861de0d","dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 04:25:25"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 04:28:20"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 04:29:39"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 14:13:10"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 14:13:10"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 14:13:45"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-16 14:14:45"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-16 14:14:45"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 14:14:48"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 14:14:48"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 14:49:44"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 14:49:44"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 14:51:39"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 14:51:39"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 14:57:25"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 14:57:25"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 15:02:04"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 15:02:04"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 15:06:50"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 15:06:50"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 15:18:51"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 15:18:51"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 15:20:21"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 15:20:21"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 15:22:59"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 15:22:59"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 15:26:39"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 15:26:39"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 15:28:30"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 15:28:30"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 15:29:50"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 15:29:50"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 15:30:26"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 15:30:26"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 15:31:33"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 15:31:33"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 15:31:46"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 15:31:46"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 15:32:22"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 15:32:22"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 15:35:33"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 15:35:33"}
+{"level":"info","message":"[UserGrpcService] - Server: Invoke getUserNames","timestamp":"2025-07-16 15:38:10"}
+{"level":"info","message":["dc3c9897-6b5c-4264-ac1f-c817f2af7481"],"timestamp":"2025-07-16 15:38:10"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-17 11:33:32"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-17 11:33:32"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-17 11:40:46"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-17 11:40:46"}

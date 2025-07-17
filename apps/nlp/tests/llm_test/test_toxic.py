@@ -1,11 +1,12 @@
 import dotenv
 from gen_test import make_testcases
+
 dotenv.load_dotenv()
 import pytest
 from deepeval import assert_test
 from deepeval.test_case import LLMTestCase
 from deepeval.dataset import EvaluationDataset
-from deepeval.metrics import BiasMetric, ToxicityMetric
+from deepeval.metrics import ToxicityMetric
 
 
 dataset = EvaluationDataset(test_cases=make_testcases())
@@ -22,7 +23,9 @@ def test_toxicity(test_case: LLMTestCase):
     metrics = [ToxicityMetric()]
     assert_test(test_case, metrics)
 
+
 import deepeval
+
 
 @deepeval.on_test_run_end
 def after_test_run():

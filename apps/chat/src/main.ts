@@ -7,12 +7,18 @@ import { join } from 'path';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { Logger } from 'nestjs-pino';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  // Init app 
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true });
+
+  // Config and Logger first
   const configService = app.get(ConfigService);
+  const logger = app.get(Logger);
+  app.useLogger(logger)
   
-  // Cấu hình Kafka microservice
+  // Kafka microservice Setup
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,
     options: {
@@ -26,43 +32,45 @@ async function bootstrap() {
     },
   });
   
-  app.useStaticAssets(join(__dirname, '..', 'public')); //js, css, images
-  app.setBaseViewsDir(join(__dirname, '..', 'views')); //view
-  app.setViewEngine('ejs');
+  // Assests and view engine
+  // app.useStaticAssets(join(__dirname, '..', 'public')); //js, css, images
+  // app.setBaseViewsDir(join(__dirname, '..', 'views')); //view
+  // app.setViewEngine('ejs');
+
+  // Middlewares (CORS, cookie, pipes)
   app.enableCors({origin: '*'})
   app.use(cookieParser())
-
   app.useGlobalPipes(
     new ValidationPipe({
-      // Chuẩn rest
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      transformOptions: {
+        enableImplicitConversion: true, // to convert formdata
+      },
     }),
   );
 
+  // API prefix and SwaggerDocs builder
   app.setGlobalPrefix('chat');
   const config = new DocumentBuilder()
     .setTitle('Chat Service API')
     .addBearerAuth()
-    .addTag('auth')
-    .addTag('users')
-    .addTag('statistics')
-    .addTag('notifications')
-    // .addTag('health')
     .setDescription('Chat Service API Documentation')
     .setVersion('1')
     .build();
-
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-  // Khởi động microservices trước
+  // bootstrap microservices in advance
   await app.startAllMicroservices();
   
-  // Sau đó khởi động HTTP server
-  await app.listen(configService.get<string>('PORT') ?? 3000, () => {
-    console.log("Chat-Service now listening on PORT 4001");
+  // bootstrap http server
+  const port = configService.get<string>('PORT') ?? 3000;
+  await app.listen(port, () => {
+    logger.log(`Chat-Service now listening on PORT ${port}`, 'Bootstrap');
+    logger.log(`Swagger documentation available at http://localhost:${port}/api/docs`, 'Bootstrap');
   });
 }
+
 bootstrap();

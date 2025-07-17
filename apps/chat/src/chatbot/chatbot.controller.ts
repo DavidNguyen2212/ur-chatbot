@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards, Req, Res, Headers, NotFoundException, Options } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards, Req, Res, Headers, NotFoundException, Options, UseInterceptors, UploadedFiles, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { ChatbotService } from './chatbot.service';
 import { JwtAuthGuard } from '../common/guards/jwt.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -7,6 +7,7 @@ import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { CoolJwtPayload } from '../common/interfaces/payload';
 import { ChatbotConfigDto } from './dto/chatbot-config.dto';
 import { Request, Response } from 'express';
+import { AnyFilesInterceptor, FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @Controller('chatbot')
 export class ChatbotController {
@@ -21,25 +22,54 @@ export class ChatbotController {
     return this.chatbotService.getChatbotConfig(user.organization?.id!);
   }
 
-  @Put('config')
-  async updateChatbotConfig(
-    @CurrentUser() user: CoolJwtPayload,
-    @Body() configData: ChatbotConfigDto) {
-    return this.chatbotService.updateChatbotConfig(user.organization?.id!, configData);
-  }
-
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('OWNER', 'ADMIN')
   @Patch('config')
+  @UseInterceptors(FileFieldsInterceptor(
+      [
+        { name: 'avatar', maxCount: 1 },
+        { name: 'background_image', maxCount: 1 },
+      ],
+    ),
+  )
   async partialUpdateChatbotConfig(
     @CurrentUser() user: CoolJwtPayload,
-    @Body() configData: Partial<ChatbotConfigDto>) {
-    return this.chatbotService.updateChatbotConfig(user.organization?.id!, configData);
+    @UploadedFiles() files: { avatar?: Express.Multer.File[]; background_image?: Express.Multer.File[] },
+    @Body() configData: ChatbotConfigDto,
+  ) {
+    const maxSizeMB = 10;
+    for (const [field, fileList] of Object.entries(files)) {
+      for (const file of fileList ?? []) {
+        if (file.size > maxSizeMB * 1024 * 1024) {
+          throw new BadRequestException(
+            `File "${file.originalname}" in field "${field}" exceeds ${maxSizeMB}MB`,
+          );
+        }
+      }
+    }
+
+    // Convert to single file map: avatar, background
+    const fileMap: Record<string, Express.Multer.File | undefined> = {
+      avatar: files.avatar?.[0],
+      background_image: files.background_image?.[0],
+    };
+
+    return this.chatbotService.updateChatbotConfig(
+      user.organization?.id!,
+      configData,
+      fileMap,
+    );
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('OWNER', 'ADMIN')
   @Post('config/reset')
   async resetConfig(@CurrentUser() user: CoolJwtPayload) {
     return this.chatbotService.resetConfig(user.organization?.id!, user.organization?.name!);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('OWNER', 'ADMIN')
   @Get('embed-code')
   async getEmbedCode(
     @CurrentUser() user: CoolJwtPayload, 
@@ -61,7 +91,7 @@ export class ChatbotController {
       res.status(200).json(config)
     } catch (err) {
       this.addCorsHeaders(res, origin);
-      if (err.message === 'Miền này không được phép truy cập widget chatbot') {
+      if (err instanceof ForbiddenException) {
         res.status(403).json({ detail: err.message });
       }
       if (err instanceof NotFoundException) {

@@ -8,4 +8,6 @@ htmlcov
 .venv
 docs/
 .env
+*env.*
 *.zip
+logs/

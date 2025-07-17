@@ -3,16 +3,21 @@ import { Model } from 'mongoose';
 import { ChatbotConfig } from './schemas/chatbot-config.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Request } from 'express';
-import { ChatbotConfigDto } from './dto/chatbot-config.dto';
+import { PinoLogger } from 'nestjs-pino';
+import { UploadService } from '../shared/services/upload.service';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class ChatbotService {
   constructor (
+    private readonly logger: PinoLogger,
+    private readonly uploadService: UploadService,
     @InjectModel(ChatbotConfig.name)
     private readonly chatbotConfModel: Model<ChatbotConfig>
   ) {}
 
-  async getChatbotConfig(orgId: string) {
+  async getChatbotConfig(orgId: UUID) {
+    this.logger.info(orgId)
     const config = await this.chatbotConfModel.findOne({
       organization_id: orgId
     }).lean()
@@ -20,11 +25,25 @@ export class ChatbotService {
     return config
   }
 
-  async updateChatbotConfig(orgId: string, dto: Partial<ChatbotConfigDto>) {
+  async updateChatbotConfig(orgId: UUID, body: any, files: Record<string, Express.Multer.File | undefined>) {
+    const avatar = files['avatar'];
+    const backgroundImage = files['background_image'];
+
+    const [avatarUrl, backgroundImageUrl] = await Promise.all([
+      avatar ? this.uploadService.uploadFile(avatar, "chatbot/avatar", orgId) : Promise.resolve(undefined),
+      backgroundImage ? this.uploadService.uploadFile(backgroundImage, "chatbot/bg", orgId) : Promise.resolve(undefined),
+    ]);
+    
+    const updatedConfig = {
+      ...body,
+      ...(avatarUrl && { avatar: avatarUrl }),
+      ...(backgroundImageUrl && { background_image: backgroundImageUrl }),
+    };
+
     const config = await this.chatbotConfModel.findOneAndUpdate({
       organization_id: orgId
       },
-      dto,
+      updatedConfig,
       { new: true, runValidators: true }
     )
 
@@ -34,14 +53,14 @@ export class ChatbotService {
     return config;
   }
 
-  async resetConfig(orgId: string, orgName: string) {
+  async resetConfig(orgId: UUID, orgName: string) {
     const config = await this.chatbotConfModel.findOne({ organization_id: orgId });
     if (!config) {
       throw new NotFoundException('Không tìm thấy cấu hình Chatbot.');
     }
   
     // Reset fields về mặc định
-    config.display_name = `Trợ lý ${orgName}`; // Bạn có thể query org name nếu cần
+    config.display_name = `Trợ lý ${orgName}`; 
     config.avatar = null;
     config.background_image = null;
     config.font = 'ARIAL';
@@ -63,7 +82,7 @@ export class ChatbotService {
     return config.toObject();
   }
   
-  async getEmbedCode(orgId: string, baseUrl: string) {
+  async getEmbedCode(orgId: UUID, baseUrl: string) {
     const config = await this.chatbotConfModel.findOne({ organization_id: orgId }).lean();
     if (!config) {
       throw new NotFoundException('Không tìm thấy cấu hình Chatbot.');
@@ -105,15 +124,11 @@ export class ChatbotService {
     if (origin) {
       const domain = new URL(origin).hostname
       if (allowed_domains.length && !allowed_domains.includes(domain)) {
-        throw new ForbiddenException('Miền này không được phép truy cập widget chatbot');
+        throw new ForbiddenException('This domain is not allowed to access widget chatbot');
       }
     }
 
     return config
-  }
-
-  buildAbsoluteUrl(req: Request, path: string): string {
-    return `${req.protocol}://${req.get('host')}/${path}`;
   }
 
   async createDefaultChatbotConfig(orgId: string, orgName: string) {

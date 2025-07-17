@@ -1,4 +1,5 @@
 import pandas as pd
+
 # from deepeval.test_case import LLMTestCase
 
 # def make_testcases_de(filename: str = "llmtest.xlsx"):
@@ -11,13 +12,15 @@ import pandas as pd
 #             input=row["Input"],
 #             expected_output=row["Expected Output"],
 #             actual_output=row["Actual output"],
-#             retrieval_context=[part.strip() for part in row.get("Context", None).split(separator)] 
+#             retrieval_context=[part.strip() for part in row.get("Context", None).split(separator)]
 #         )
 #         test_cases.append(tc)
 
 #     return test_cases
 
 from ragas.dataset_schema import SingleTurnSample
+
+
 def make_testcases(filename: str = "D:/FastAPILLM/tests/llm_test/dora_results.xlsx"):
     df = pd.read_excel(filename)
     # separator = '\n---\n'

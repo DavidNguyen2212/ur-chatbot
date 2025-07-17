@@ -1,80 +1,100 @@
 import { ErrorWithStatus } from "../interfaces/Errors"
-import { prisma } from "../infra/prisma/prisma.client"
 import { uploadFileToS3 } from "../infra/s3/s3.upload"
+import { UpdateUserInput, UserInfoResponse, UserWithDetails } from "../interfaces/user"
+import { UserRepository } from "../repositories/user.repository"
+import { UserName } from "../generated/user_service";
 
-interface UpdateUserInput {
-  userId: string
-  name?: string
-  phone?: string
-  avatar?: Express.Multer.File
-}
 
 class UsersService {
-  async getUserInfo(userId: string) {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        phone: true,
-        avatar: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true,
-        organizationMembers: {
-          include: { organization: true }
-        }
-        // Do not include emailVerificationTokens, organizationInvites
-      }
-    })
-
+  constructor(private userRepo: UserRepository) {}
+  async getUserInfo(userId: string): Promise<UserWithDetails> {
+    const user = await this.userRepo.findByIdWithDetails(userId);
+    
     if (!user) {
       throw new ErrorWithStatus({
         message: "User not found",
         status: 404
-      })
+      });
     }
-
-    return user
+    
+    return user;
   }
 
-  async updateUserInfo({ userId, name, phone, avatar }: UpdateUserInput) {
-    const user = await prisma.user.findUnique({ where: { id: userId } })
+  async updateUserInfo({ userId, name, phone, avatar }: UpdateUserInput): Promise<UserInfoResponse> {
+    // Check if user exists
+    const user = await this.userRepo.findById(userId);
     if (!user) {
-      throw new Error('Người dùng không tồn tại')
+      throw new Error('Người dùng không tồn tại');
     }
 
-    let newAvatarKey = user.avatar ?? null
+    // Handle avatar upload if provided
+    let newAvatarKey = user.avatar ?? null;
     if (avatar) {
-      newAvatarKey = `avatar/${userId}`
+      newAvatarKey = `avatar/${userId}`;
       await uploadFileToS3({
         contentType: avatar.mimetype,
         filename: newAvatarKey,
         filestream: avatar.buffer
-      })
+      });
     }
 
-    const updatedUser = await prisma.$transaction(async (tx) => {
-      const updatedUser = await tx.user.update({
-        where: { id: userId },
-        data: {
-          name,
-          phone,
-          avatar: newAvatarKey
-        }
-      })
-      return updatedUser
-    })
+    // Update user data
+    const updatedUser = await this.userRepo.update(userId, {
+      name,
+      phone,
+      avatar: newAvatarKey
+    });
 
+    // Return formatted response
     return {
       email: updatedUser.email,
-      name: updatedUser.name,
-      phone_number: updatedUser.phone,
+      name: updatedUser.name || '',
+      phone_number: updatedUser.phone || '',
       avatar: updatedUser.avatar
+    };
+  }
+
+  async getUsersInfo(userId: string): Promise<UserWithDetails> {
+    const user = await this.userRepo.findByIdWithDetails(userId);
+    
+    if (!user) {
+      throw new ErrorWithStatus({
+        message: "User not found",
+        status: 404
+      });
     }
+    
+    return user;
+  }
+
+  
+  async proto_getNames(userIds: string[]): Promise<Map<string, UserName>> {
+    if (!Array.isArray(userIds) || userIds.length === 0) {
+      return new Map();
+    }
+
+    // Remove duplicates and filter out empty strings
+    const uniqueUserIds = [...new Set(userIds)].filter(id => id && id.trim());
+    if (uniqueUserIds.length === 0) {
+      return new Map();
+    }
+
+    const users = await this.userRepo.findNamesByIds(uniqueUserIds);
+    const nameMap = new Map<string, UserName>();
+    users.forEach(user => {
+      nameMap.set(user.id, { name: user.name });
+    });
+
+    // Add null entries for userIds that weren't found
+    uniqueUserIds.forEach(userId => {
+      if (!nameMap.has(userId)) {
+        nameMap.set(userId, {});
+      }
+    });
+
+    return nameMap;
   }
 }
 
-const usersService = new UsersService()
+const usersService = new UsersService(new UserRepository())
 export default usersService

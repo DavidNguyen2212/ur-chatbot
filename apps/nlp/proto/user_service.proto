@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package user_service;
+
+// import "google/protobuf/wrappers.proto";
+
+// Service definition
+service UserService {
+  // Get multiple users by IDs (batch operation)
+  rpc GetUserNames(GetUsersRequest) returns (GetUsersResponse);
+}
+
+message GetUsersRequest {
+  repeated string user_ids = 1;
+}
+
+// Với giá trị null string, có các cách: tạo type riêng optional (UserName), dùng type riêng union-like (oneof), hoặc quy ước rỗng là null
+// message UserName {
+//   optional string name = 1;  // null nếu không set
+// }
+
+message UserName {
+  optional string name = 1;  // null nếu không set
+}
+
+// Ở đây ta dùng google.protobuf.StringValue vì k cần định nghĩa type mới, và sẽ là undefine trực tiếp
+message GetUsersResponse {
+  map<string, UserName> user_map = 1; // For quick lookup by ID
+}

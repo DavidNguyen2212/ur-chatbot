@@ -11,6 +11,9 @@ import usersRouter from './routes/user.route'
 import { defaultErrorHandler } from './middlewares/errors.middleware'
 import { connectUserProducer } from './infra/kafka/kafka.producer'
 import { startEmailConsumer } from './infra/kafka/consumers/email.consumer'
+import { startGrpcServer } from './grpc/grpcServer'
+import { httpLogger } from './middlewares/httpLogger'
+import { logger } from './utils/logger'
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -47,7 +50,7 @@ const limiter = rateLimit({
   // store: ... , // Use an external store for more precise rate limiting
 })
 app.use(limiter)
-
+app.use(httpLogger);
 const httpServer = createServer(app)
 app.use(helmet())
 // const corsOptions: CorsOptions = {
@@ -84,5 +87,7 @@ app.use(defaultErrorHandler as express.ErrorRequestHandler)
 //   console.error('Failed to start Kafka services:', err)
 // })
 httpServer.listen(port, () => {
-  console.log(`User-Service now listening on port ${port}`)
+  logger.info(`User-Service now listening on port ${port}`)
 })
+// HTTP và gRPC dùng khác protocol tầng thấp (wire format) nên không thể share port.
+startGrpcServer()
