@@ -1,7 +1,7 @@
 import shutil
 from typing import List
 from uuid import UUID
-from neo4j import GraphDatabase
+from neo4j import GraphDatabase, AsyncGraphDatabase
 from neo4j_graphrag.llm import OpenAILLM
 from neo4j_graphrag.embeddings.openai import OpenAIEmbeddings as GraphRAGEmbeddings
 from neo4j_graphrag.experimental.pipeline.kg_builder import SimpleKGPipeline

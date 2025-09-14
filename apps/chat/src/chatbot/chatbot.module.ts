@@ -29,5 +29,6 @@ import { SharedModule } from '../shared/shared.module';
   ],
   controllers: [ChatbotController, ChatbotListener],
   providers: [ChatbotService],
+  exports: [ChatbotService],
 })
 export class ChatbotModule {}

@@ -60,20 +60,11 @@ app.use(helmet())
 // const port = envConfig.port
 const port = 4000
 
-// Tạo folder upload
-// initFolder()
 app.use(express.json())
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification))
 app.use('/auth', authRouter)
 app.use('/users', usersRouter)
 app.use('/organization', orgRouter)
-// app.use('/tweets', tweetsRouter)
-// app.use('/bookmarks', bookmarksRouter)
-// app.use('/likes', likesRouter)
-// app.use('/search', searchRouter)
-// app.use('/conversations', conversationsRouter)
-// app.use('/static', staticRouter)
-// app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 app.use(defaultErrorHandler as express.ErrorRequestHandler)
 // Promise.all([
 //   connectUserProducer(),

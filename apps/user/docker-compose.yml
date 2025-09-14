@@ -1,30 +1,55 @@
 services:
-  # rabbitmq:
-  #   image: rabbitmq:3-management
-  #   container_name: rabbitmq
-  #   ports:
-  #     - "5672:5672"       # Cổng cho service RabbitMQ
-  #     - "15672:15672"     # Cổng cho web management UI
-  #   environment:
-  #     RABBITMQ_DEFAULT_USER: admin
-  #     RABBITMQ_DEFAULT_PASS: admin
-  #   networks:
-  #     - backend
-
-  redis:
-    image: redis:8
-    container_name: user_redis
+  user-service:
+    build: .
+    container_name: user-service
     ports:
-      - "6380:6379" # hostport:portincontainer(still6378)
+      - "4000:4000"   # REST API
+      - "50051:50051" # gRPC
     networks:
       - user_service
-    volumes:
-      - redis_data:/data
-    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      GRPC_PORT: 50051
+      # Kafka, Redis URL, DB... để sau sẽ trỏ tới Kubernetes Service
+      KAFKA_BROKER: kafka:9092
+      REDIS_URL: redis://user_redis:6379
+    depends_on:
+      # nếu local vẫn có kafka (docker-compose khác), thì để ở đây
+      # - kafka
+      []
 
 networks:
   user_service:
     driver: bridge
 
-volumes:
-  redis_data:
+# services:
+#   # rabbitmq:
+#   #   image: rabbitmq:3-management
+#   #   container_name: rabbitmq
+#   #   ports:
+#   #     - "5672:5672"       # Cổng cho service RabbitMQ
+#   #     - "15672:15672"     # Cổng cho web management UI
+#   #   environment:
+#   #     RABBITMQ_DEFAULT_USER: admin
+#   #     RABBITMQ_DEFAULT_PASS: admin
+#   #   networks:
+#   #     - backend
+
+#   redis:
+#     image: redis:8
+#     container_name: user_redis
+#     ports:
+#       - "6380:6379" # hostport:portincontainer(still6378)
+#     networks:
+#       - user_service
+#     volumes:
+#       - redis_data:/data
+#     command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+
+# networks:
+#   user_service:
+#     driver: bridge
+
+# volumes:
+#   redis_data:

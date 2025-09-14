@@ -19,7 +19,7 @@ export class ChatbotController {
   async getChatbotConfig(
     @CurrentUser() user: CoolJwtPayload,
   ) {
-    return this.chatbotService.getChatbotConfig(user.organization?.id!);
+    return this.chatbotService.getChatbotConfigByOrg(user.organization?.id!);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -73,7 +73,8 @@ export class ChatbotController {
   @Get('embed-code')
   async getEmbedCode(
     @CurrentUser() user: CoolJwtPayload, 
-    @Req() req: Request) {
+    @Req() req: Request
+  ) {
     const baseUrl = `${req.protocol}://${req.get('host')}`;
     return this.chatbotService.getEmbedCode(user.organization?.id!, baseUrl);
   }
@@ -99,7 +100,7 @@ export class ChatbotController {
       }
       res.status(500).json({ detail: 'Internal Server Error' });
     }
-  }
+  } 
 
   @Options('widget-config/:token')
   optionsWidgetConfig(@Headers('origin') origin: string, @Res() res: Response) {
