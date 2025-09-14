@@ -14,7 +14,7 @@ class GetUsersRequest(BaseModel):
 
 class UserName(BaseModel):
     name: typing.Optional[str] = Field(default="")  # null nếu không set
-
+ 
 
 class GetUsersResponse(BaseModel):
     user_map: "typing.Dict[str, UserName]" = Field(

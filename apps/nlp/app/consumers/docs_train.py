@@ -110,6 +110,7 @@ async def create_index(
         existing_namespaces = list(index_stats.get("namespaces", {}).keys())
         if org_namespace in existing_namespaces:
             index.delete(delete_all=True, namespace=org_namespace)
+        # Obsoleted
         #     if not is_virtual:
         #         index.delete(delete_all=True, namespace=org_namespace)
         #     else:

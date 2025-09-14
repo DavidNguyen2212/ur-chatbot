@@ -2,6 +2,7 @@ import { Controller, Injectable, OnModuleInit } from "@nestjs/common";
 import { ChatbotService } from "./chatbot.service";
 import { Ctx, KafkaContext, MessagePattern, Payload } from "@nestjs/microservices";
 import { PinoLogger } from "nestjs-pino";
+import { KAFKA_EVENT } from "../common/constant/event";
 
 @Injectable()
 @Controller()
@@ -15,7 +16,7 @@ export class ChatbotListener implements OnModuleInit {
         this.logger.info('Chatbot Kafka listener initialized');
     }
 
-    @MessagePattern('organization.registered')
+    @MessagePattern(KAFKA_EVENT.ORG_REGISTER)
     async handleOrganizationRegistered(
         @Payload() message: any,
         @Ctx() context: KafkaContext

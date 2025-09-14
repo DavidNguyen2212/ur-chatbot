@@ -190,3 +190,5 @@
 {"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-17 11:33:32"}
 {"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-17 11:40:46"}
 {"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-17 11:40:46"}
+{"level":"info","message":"User-Service now listening on port 4000","timestamp":"2025-07-19 01:45:02"}
+{"level":"info","message":"🚀 gRPC User Service (Server) running at 50051","timestamp":"2025-07-19 01:45:02"}

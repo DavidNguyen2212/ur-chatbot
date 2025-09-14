@@ -18,8 +18,8 @@ export class Conversation {
     customer_session_id: string;
 
     // @Prop({ type: SchemaTypes.ObjectId, ref: 'User', default: null }) 
-    @Prop({ required: true })
-    agent_id: string; // // Không dùng ref vì là microservice
+    @Prop({ required: false })
+    agent_id?: string; // // Không dùng ref vì là microservice
 
     @Prop({ default: true })
     is_active: boolean;
@@ -35,6 +35,8 @@ export class Conversation {
 
     @Prop()
     ai_session_id?: string;
+
+    last_activity: Date
 }
 
 export const ConversationSchema = SchemaFactory.createForClass(Conversation)

@@ -1,14 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, HydratedDocument, SchemaTypes } from 'mongoose';
+import { Document, HydratedDocument, SchemaTypes, Types } from 'mongoose';
+import { Conversation } from './conversation.schema';
 
 export type MessageDocument = HydratedDocument<Message>;
 
 @Schema({ timestamps: { createdAt: 'timestamp' } })
 export class Message {
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Conversation', required: true,
+  @Prop({ 
+    type: SchemaTypes.ObjectId, 
+    ref: 'Conversation', 
+    required: true,
     index: true
-   })
-  conversation: string;
+  })
+  conversation: Types.ObjectId | Conversation;
 
   @Prop({ required: true })
   content: string;
@@ -24,6 +28,8 @@ export class Message {
 
   @Prop({ default: false })
   is_read: boolean;
+
+  timestamp: Date;
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);

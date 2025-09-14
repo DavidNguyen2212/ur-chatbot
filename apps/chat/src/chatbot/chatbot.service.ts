@@ -16,7 +16,7 @@ export class ChatbotService {
     private readonly chatbotConfModel: Model<ChatbotConfig>
   ) {}
 
-  async getChatbotConfig(orgId: UUID) {
+  async getChatbotConfigByOrg(orgId: UUID) {
     this.logger.info(orgId)
     const config = await this.chatbotConfModel.findOne({
       organization_id: orgId
@@ -24,6 +24,17 @@ export class ChatbotService {
 
     return config
   }
+
+  async getChatbotConfigByOrgAndToken(orgId: string, token: string) {
+    this.logger.info(orgId)
+    const config = await this.chatbotConfModel.findOne({
+      organization_id: orgId,
+      embedding_token: token
+    }).lean()
+
+    return config
+  }
+
 
   async updateChatbotConfig(orgId: UUID, body: any, files: Record<string, Express.Multer.File | undefined>) {
     const avatar = files['avatar'];
