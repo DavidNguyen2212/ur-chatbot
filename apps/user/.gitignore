@@ -8,3 +8,5 @@ dist/
 .env.staging
 uploads/
 .DS_Store
+k8s/secret.yaml
+k8s/configmap.yaml

@@ -9,3 +9,5 @@ yarn.lock
 .DS_Store
 dist/
 coverage/
+secret.yaml
+configmap.yaml

@@ -13,7 +13,7 @@ services:
       GRPC_PORT: 50051
       # Kafka, Redis URL, DB... để sau sẽ trỏ tới Kubernetes Service
       KAFKA_BROKER: kafka:9092
-      REDIS_URL: redis://user_redis:6379
+      REDIS_URL: redis://redis:6379
     depends_on:
       # nếu local vẫn có kafka (docker-compose khác), thì để ở đây
       # - kafka

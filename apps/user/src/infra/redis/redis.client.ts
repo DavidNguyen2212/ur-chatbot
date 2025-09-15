@@ -1,8 +1,5 @@
 import Redis from "ioredis";
 
-const redisClient = new Redis(
-  Number(process.env.REDIS_PORT) || 6379,
-  process.env.REDIS_HOST || "localhost",
-)
+const redisClient = new Redis(process.env.REDIS_URL || "redis://localhost:6379")
 
 export default redisClient

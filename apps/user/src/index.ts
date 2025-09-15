@@ -19,7 +19,7 @@ const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'X clone (Twitter API)',
+      title: 'User Serivce (SWAGGER API)',
       version: '1.0.0'
     },
     components: {
@@ -53,32 +53,49 @@ app.use(limiter)
 app.use(httpLogger);
 const httpServer = createServer(app)
 app.use(helmet())
-// const corsOptions: CorsOptions = {
-//   origin: isProduction ? envConfig.clientUrl : '*'
-// }
-// app.use(cors(corsOptions))
-// const port = envConfig.port
-const port = 4000
+const corsOptions: CorsOptions = {
+  // origin: process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : '*' // REAL PRODUCT
+  origin: process.env.NODE_ENV === 'production' ? '*' : process.env.FRONTEND_URL // LOCAL PRODUCT
+}
+app.use(cors(corsOptions))
+const port = process.env.PORT || 4000
 
 app.use(express.json())
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification))
 app.use('/auth', authRouter)
 app.use('/users', usersRouter)
 app.use('/organization', orgRouter)
-app.use(defaultErrorHandler as express.ErrorRequestHandler)
-// Promise.all([
-//   connectUserProducer(),
-//   startEmailConsumer()
-// ]).then(() => {
-//   console.log('Connected to KAFKA_BROKER and started email consumer!')
-//   httpServer.listen(port, () => {
-//     console.log(`User-Service now listening on port ${port}`)
-//   })
-// }).catch(err => {
-//   console.error('Failed to start Kafka services:', err)
-// })
-httpServer.listen(port, () => {
-  logger.info(`User-Service now listening on port ${port}`)
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  })
 })
-// HTTP và gRPC dùng khác protocol tầng thấp (wire format) nên không thể share port.
+
+app.use(defaultErrorHandler as express.ErrorRequestHandler)
+
 startGrpcServer()
+
+Promise.all([
+  connectUserProducer(),
+  startEmailConsumer()
+]).then(() => {
+  logger.info('Connected to KAFKA_BROKER and started email consumer!')
+  
+  httpServer.listen(port, () => {
+    logger.info(`User-Service HTTP now listening on port ${port}`)
+  })
+}).catch(err => {
+  logger.error('Failed to start Kafka services:', err)
+  
+  // Nếu Kafka fail, vẫn start HTTP server để app không chết
+  httpServer.listen(port, () => {
+    logger.warn(`User-Service HTTP started without Kafka on port ${port}`)
+  })
+})
+
+// Hệ thooongs log của microservice.
+// [Microservice] → stdout/stderr → [Container Runtime] → [Log Agent] → [Central Log Store]
+//      ↓               ↓                    ↓                 ↓              ↓
+//    Your App      Console.log         Kubernetes        Fluentd         ELK/Loki

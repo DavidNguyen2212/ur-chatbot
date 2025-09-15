@@ -5,8 +5,11 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 # Copy config
 COPY package.json pnpm-lock.yaml ./
-# Install dependencies
+# Install dependencies (+dev)
 RUN pnpm install
+# Copy prisma schema & generate client
+COPY prisma ./prisma
+RUN npx prisma generate
 # Copy source
 COPY . .
 # Build code TypeScript -> JavaScript
@@ -19,9 +22,14 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 # Copy essential files from builder
 COPY package.json pnpm-lock.yaml ./
-# Install dependency production
-RUN pnpm install --prod --frozen-lockfile
-# Copy built code
+COPY --from=builder /app/prisma ./prisma
+# Install ALL dependencies first (including @prisma/client)
+RUN pnpm install --frozen-lockfile
+# Generate Prisma client
+RUN npx prisma generate
+# Remove dev dependencies but keep Prisma client
+RUN pnpm prune --prod
+# Copy built dist from builder
 COPY --from=builder /app/dist ./dist
 # Expose port (ví dụ Express chạy ở 4000)
 EXPOSE 4000 50051

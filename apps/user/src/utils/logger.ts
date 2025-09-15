@@ -24,7 +24,7 @@ const createTransports = () => {
   const transports: winston.transport[] = [];
 
   // Console transport - chỉ trong development
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV === 'production') {
     const consoleFormat = printf(({ level, message, timestamp, stack, ...meta }) => {
       const metaStr = Object.keys(meta).length ? JSON.stringify(meta, null, 2) : '';
       return `${timestamp} [${level}]: ${stack || message} ${metaStr}`;

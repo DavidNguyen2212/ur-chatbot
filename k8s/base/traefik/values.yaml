@@ -1,0 +1,33 @@
+service:
+  type: NodePort
+ports:
+  web:
+    nodePort: 30080
+  websecure:
+    nodePort: 30443
+  # traefik:
+  #   nodePort: 30081
+  #   expose:
+  #     default: true
+  #   protocol: TCP
+  #   port: 9000
+
+persistence:
+  enabled: true
+  size: 1Gi
+
+# Remove ACME for localhost - use proper YAML comments
+additionalArguments:
+  # Use default certificate for localhost
+  - --providers.kubernetesingress.allowEmptyServices=true
+  
+# If you want ACME later for production, uncomment these:
+# additionalArguments:
+#   - --certificatesresolvers.myresolver.acme.email=an.nguyenduc2003qng@hcmut.edu.vn
+#   - --certificatesresolvers.myresolver.acme.storage=/data/acme.json  
+#   - --certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web
+
+dashboard:
+  enabled: true
+
+

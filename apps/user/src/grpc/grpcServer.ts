@@ -7,6 +7,7 @@ import { logger } from '../utils/logger';
 
 // Hàm khởi tạo server gRPC và bind các service
 export function startGrpcServer(port = '0.0.0.0:50051') {
+  logger.info('Start gRPC server...');
   const server = new grpc.Server();
   const userServiceImpl = new UserGrpcService();
 
